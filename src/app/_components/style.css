@@ -1,0 +1,29 @@
+.slick-prev:before,
+.slick-next:before {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #D23F57;
+    border: 1px solid #D23F57 !important;
+    border-radius: 50%;
+    padding: 15px;
+    background-color: white;
+    box-shadow: 5px 5px 4px rgba(0, 0, 0, 0.25);
+}
+.slick-prev:before {
+    content: url("/images/static/prev_arrow.svg") !important;
+    color: #D23F57;
+}
+
+.slick-next:before {
+    content: url("/images/static/next_arrow.svg") !important;
+}
+
+.slick-prev {
+    z-index: 12; 
+}
+
+.slick-next {
+    right: 20px !important;
+    z-index: 12;
+}

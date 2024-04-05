@@ -1,0 +1,68 @@
+/* Header Component Styles */
+.active {
+    @apply tw-text-primary 
+    tw-inline-block 
+    tw-relative
+}
+
+.active::after {
+    content: '';
+    position: absolute;
+    bottom: -6px;
+    right: 0;
+    width: 40%;
+    height: 4px;
+    border-radius: 8px;
+    @apply tw-bg-primary
+}
+
+.active>span {
+    position: relative;
+    z-index: 1;
+}
+
+/* Product Card Styles  */
+.hoverIcons {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    background: rgba(255, 255, 255, 0.8);
+    padding: 8px;
+    border-radius: 4px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+  
+  .hoverIcons:hover {
+    opacity: 1;
+  }
+  
+/* Product Side Bar Styles  */
+
+.dropdownContent {
+    display: block;
+    position: relative;
+    margin-top: 10px;
+    animation: fadeIn 0.3s ease-in-out; /* Add animation */
+}
+
+.dropdownContent ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+.dropdownContent li {
+    padding: 5px 0;
+}
+
+/* Keyframes for fadeIn animation */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
