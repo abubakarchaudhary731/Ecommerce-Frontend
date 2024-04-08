@@ -32,11 +32,11 @@ const ProductCard = ({ item }) => {
                         <Heart style={{ fill: isClicked ? '#D23F57' : 'none', color: isClicked ? '#D23F57' : 'none' }}  />
                     </IconButton>
                 </div>
-                <RatingStar
+                {/* <RatingStar
                     readOnly
                     value={item.rating}
-                />
-                <div className='tw-mt-3'>
+                /> */}
+                <div>
                     <b className='tw-text-primary tw-mr-3'>${item.discountPrice}</b>
                     <i><del>${item.price}</del></i>
                 </div>

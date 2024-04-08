@@ -28,9 +28,9 @@ const Main = () => {
                         <SideBar />
                     </div>
                     <div className='tw-basis-full lg:tw-pl-10'>
-                        <div className='tw-flex tw-justify-between tw-items-center tw-mb-4'>
+                        <div className='sm:tw-flex tw-justify-between tw-items-center tw-mb-4'>
                             <p className='tw-font-bold tw-text-2xl'> ALL Products </p>
-                            <div className='tw-w-52'>
+                            <div className='tw-w-52 tw-mt-2 sm:tw-mt-0'>
                                 <AbInputField
                                     label='Search'
                                     type='search'
