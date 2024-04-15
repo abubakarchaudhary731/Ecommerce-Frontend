@@ -20,12 +20,15 @@ const Header = () => {
     };
 
     const isActive = (path) => {
-        if (showSearch && path === '/search') {
-            return true;
-        } else if (!showSearch && path === pathName) {
-            return true;
+        if (showSearch) {
+            return path === '/search';
+        } else {
+            if (Array.isArray(path)) {
+                return path.includes(pathName); // Return true if the path matches any of the given paths
+            } else {
+                return path === pathName; // Return true if the path matches the current path
+            }
         }
-        return false;
     };
 
     const links = [
@@ -52,8 +55,8 @@ const Header = () => {
                             ))}
                             <div className="tw-ml-8 tw-flex tw-items-center tw-space-x-4">
                                 <SearchNormal1 className={isActive('/search') ? css.active : 'tw-cursor-pointer'} onClick={toggleSearch} />
-                                <User className={isActive('/profile') ? css.active : 'tw-cursor-pointer'} onClick={() => router.push('/profile')} />
-                                <div className="tw-relative tw-cursor-pointer"  onClick={() => router.push('/cart')}>
+                                <User className={isActive(['/profile', '/orders', '/wishlist', '/addresses', '/payment-methods']) ? css.active : 'tw-cursor-pointer'} onClick={() => router.push('/profile')} />
+                                <div className="tw-relative tw-cursor-pointer" onClick={() => router.push('/cart')}>
                                     <ShoppingCart className={isActive('/cart') ? css.active : ''} />
                                     <div className="tw-absolute tw-bottom-4 tw-left-5 tw-w-5 tw-h-5 tw-flex tw-items-center tw-justify-center tw-bg-red-500 tw-text-white tw-rounded-full tw-text-xs">4</div>
                                 </div>

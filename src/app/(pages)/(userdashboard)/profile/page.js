@@ -1,11 +1,12 @@
 import AppLayout from '@/components/theme/AppLayout';
 import React from 'react'
+import Main from './_components/Main';
 
 const Profile = () => {
     return (
         <>
             <AppLayout>
-                <div>Profile</div>
+                <Main />
             </AppLayout>
         </>
     )

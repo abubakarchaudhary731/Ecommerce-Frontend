@@ -17,6 +17,7 @@ const AbInputField = ({
     required = false,
     fullWidth = true,
     style,
+    ...props
 }) => {
     const inputProps = {
         endAdornment: icon ? (
@@ -33,7 +34,7 @@ const AbInputField = ({
             id={id ? id : ""}
             label={label}
             value={value}
-            variant={variant ? variant : "standard"}
+            variant={variant ? variant : "outlined"}
             name={name}
             required={required}
             error={error ? true : false}
@@ -46,6 +47,7 @@ const AbInputField = ({
             color={color}
             InputProps={inputProps}
             size="small"
+            {...props}
         />
     );
 }

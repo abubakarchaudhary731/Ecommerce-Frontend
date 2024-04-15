@@ -20,6 +20,7 @@ const MailForm = () => {
                     name='email'
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
+                    variant='standard'
                     style={{
                         '& input': {
                             color: 'white', // Set text color to white

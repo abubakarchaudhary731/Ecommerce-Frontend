@@ -51,7 +51,7 @@ const CartItem = () => {
                                     <div className='tw-basis-full tw-pl-2 tw-pr-2 sm:tw-pr-10'>
                                         <div className='tw-flex tw-justify-between tw-items-center tw-text-lg'>
                                             <h1 className='tw-font-bold'>Product Name</h1>
-                                            <ClearIcon className='tw-cursor-pointer tw-text-icon' onclick={handleClickOpen} />
+                                            <ClearIcon className='tw-cursor-pointer tw-text-icon' onClick={handleClickOpen} />
                                         </div>
                                         <br />
                                         <div className='tw-text-sm tw-flex tw-justify-between tw-items-center tw-flex-wrap'>
