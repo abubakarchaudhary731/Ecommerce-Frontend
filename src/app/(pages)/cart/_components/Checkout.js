@@ -12,6 +12,12 @@ const Checkout = () => {
     postal_code: '',
     phone: '',
   });
+  const [paymentDetail, setPaymentDetail] = useState({
+    nameOnCard: '',
+    cardNumber: '',
+    cvc: '',
+    expiryDate: '',
+  });
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -26,6 +32,18 @@ const Checkout = () => {
     console.log(address);
   }
 
+  const handlePaymentChange = (e) => {
+    const { name, value } = e.target;
+    setPaymentDetail(prevData => ({
+      ...prevData,
+      [name]: value
+    }));
+  };
+
+  const handlePaymentSubmit = (e) => {
+    e.preventDefault()
+    console.log(paymentDetail);
+  }
   // Sample prices, you can replace these with your actual prices
   const prices = {
     subtotal: 100.00,
@@ -78,6 +96,9 @@ const Checkout = () => {
             <div className='tw-my-4'>
               <PaymentForm
                 title='Add Card'
+                data={paymentDetail}
+                handleChange={handlePaymentChange}
+                handleSubmit={handlePaymentSubmit}
               />
             </div>
           </div>

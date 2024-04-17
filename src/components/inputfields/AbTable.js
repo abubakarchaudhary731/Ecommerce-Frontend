@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import AbPagination from './AbPagination';
+import { ArrowRight } from 'iconsax-react';
 
-const AbTable = ({ data, columns }) => {
+const AbTable = ({ data, columns, icon, clickOnIcon }) => {
     const [currentPage, setCurrentPage] = useState(1);
     const rowsPerPage = 6;
     const totalPages = Math.ceil(data.length / rowsPerPage);
@@ -43,6 +44,9 @@ const AbTable = ({ data, columns }) => {
                                     {row[column.key]}
                                 </td>
                             ))}
+                            {icon && (
+                                <td className='tw-cursor-pointer' onClick={clickOnIcon}> <ArrowRight className='tw-text-primary' /> </td>
+                            )}
                         </tr>
                     ))}
                 </tbody>

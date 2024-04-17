@@ -25,16 +25,24 @@ const DashboardLayout = ({ children, counts }) => {
 const renderNavItem = (Icon, label, count) => {
     const router = useRouter();
     const pathName = usePathname();
-    const isActive = pathName === '/' + label.toLowerCase();
+    let isActive = pathName === '/' + label.toLowerCase();
+
+    if ((pathName === '/orders' || pathName === '/orderdetail') && label.toLowerCase() === 'orders') {
+        isActive = true;
+    } else if (pathName === '/orders' || pathName === '/orderdetail') {
+        isActive = false;
+    }
+
     return (
-        <div className={`tw-flex tw-justify-between tw-mt-3 tw-items-center ${isActive && 'tw-border-l-4 tw-border-primary tw-text-primary'} tw-px-5 tw-cursor-pointer`} onClick={() => router.push('/' + label.toLowerCase())}>
+        <div className={`tw-flex tw-justify-between tw-mt-5 tw-items-center ${isActive && 'tw-border-l-4 tw-border-primary tw-text-primary'} tw-px-5 tw-cursor-pointer`} onClick={() => router.push('/' + label.toLowerCase())}>
             <div className='tw-flex tw-gap-2 tw-items-center'>
-                <Icon className={isActive ? 'tw-text-primary' : 'tw-text-icon'} size={16} /> {/* Reduce icon size for smaller screens */}
-                <p className='tw-text-sm'>{label}</p> {/* Reduce text size for smaller screens */}
+                <Icon className={isActive ? 'tw-text-primary' : 'tw-text-icon'} size={16} />
+                <p className='tw-text-sm'>{label}</p>
             </div>
-            <p className={`${isActive ? 'tw-text-primary' : 'tw-text-icon'} tw-text-sm`}>{count}</p> {/* Reduce count size for smaller screens */}
+            <p className={`${isActive ? 'tw-text-primary' : 'tw-text-icon'} tw-text-sm`}>{count}</p>
         </div>
     );
 }
+
 
 export default DashboardLayout;

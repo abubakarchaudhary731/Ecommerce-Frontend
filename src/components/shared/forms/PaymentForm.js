@@ -22,7 +22,7 @@ const PaymentForm = ({
               <AbInputField
                 label='Name on Card'
                 type='text'
-                name='cardName'
+                name='nameOnCard'
                 value={data.nameOnCard}
                 onChange={handleChange}
               />

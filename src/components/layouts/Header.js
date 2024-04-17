@@ -55,7 +55,7 @@ const Header = () => {
                             ))}
                             <div className="tw-ml-8 tw-flex tw-items-center tw-space-x-4">
                                 <SearchNormal1 className={isActive('/search') ? css.active : 'tw-cursor-pointer'} onClick={toggleSearch} />
-                                <User className={isActive(['/profile', '/orders', '/wishlist', '/addresses', '/payment-methods']) ? css.active : 'tw-cursor-pointer'} onClick={() => router.push('/profile')} />
+                                <User className={isActive(['/profile', '/orders', '/wishlist', '/addresses', '/payment-methods', '/orderdetail']) ? css.active : 'tw-cursor-pointer'} onClick={() => router.push('/profile')} />
                                 <div className="tw-relative tw-cursor-pointer" onClick={() => router.push('/cart')}>
                                     <ShoppingCart className={isActive('/cart') ? css.active : ''} />
                                     <div className="tw-absolute tw-bottom-4 tw-left-5 tw-w-5 tw-h-5 tw-flex tw-items-center tw-justify-center tw-bg-red-500 tw-text-white tw-rounded-full tw-text-xs">4</div>
