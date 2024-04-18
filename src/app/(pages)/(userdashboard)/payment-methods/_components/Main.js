@@ -2,8 +2,11 @@
 import React, { useState } from 'react'
 import AbTable from '@/components/inputfields/AbTable';
 import PaymentForm from '@/components/shared/forms/PaymentForm';
+import { DeleteForever } from '@mui/icons-material';
+import AbAlertDialog from '@/components/inputfields/AbAlertDialog';
 
 const Main = () => {
+  const [alertOpen, setAlertOpen] = useState(false);
   const [paymentDetail, setPaymentDetail] = useState({
     nameOnCard: '',
     cardNumber: '',
@@ -22,6 +25,13 @@ const Main = () => {
   const handleSubmit = (e) => {
     e.preventDefault()
     console.log(paymentDetail);
+  }
+
+  const handleAlertOpen = () => {
+    setAlertOpen(true);
+  }
+  const handleAlertClose = () => {
+    setAlertOpen(false);
   }
   
   const columns = [
@@ -42,6 +52,8 @@ const Main = () => {
         <AbTable
           data={data}
           columns={columns}
+          icon={<DeleteForever className='tw-text-primary' />}
+          clickOnIcon={handleAlertOpen}
         />
       </div>
 
@@ -55,7 +67,11 @@ const Main = () => {
           defaultExpanded={true}
         />
       </div>
-
+      <AbAlertDialog
+        open={alertOpen}
+        handleClose={handleAlertClose}
+        title='Are you sure you want to delete this payment method?'
+      />
     </>
   )
 }

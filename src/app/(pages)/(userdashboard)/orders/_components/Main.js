@@ -1,6 +1,6 @@
 'use client'
 import AbTable from '@/components/inputfields/AbTable'
-import { ShoppingBag } from 'iconsax-react'
+import { ArrowRight, ShoppingBag } from 'iconsax-react'
 import { useRouter } from 'next/navigation'
 import React from 'react'
 
@@ -51,7 +51,7 @@ const Main = () => {
         <AbTable
           data={orders}
           columns={columns}
-          icon={true}
+          icon={<ArrowRight className='tw-text-primary' />}
           clickOnIcon={handleIconClick}
         />
       </div>
