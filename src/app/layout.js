@@ -1,6 +1,7 @@
 import { Montserrat } from "next/font/google";
 import { ThemeProvider } from "@mui/material";
 import theme from "@/components/theme/theme";
+import { Providers } from "@/reduxtoolkit/Providers";
 import "./globals.css";
 
 const montserrat = Montserrat({
@@ -18,9 +19,11 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body className={montserrat.className}>
-        <ThemeProvider theme={theme}>
-          {children}
-        </ThemeProvider>
+        <Providers>
+          <ThemeProvider theme={theme}>
+            {children}
+          </ThemeProvider>
+        </Providers>
       </body>
     </html>
   );
