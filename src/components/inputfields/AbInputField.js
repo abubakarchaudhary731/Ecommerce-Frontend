@@ -21,7 +21,7 @@ const AbInputField = ({
 }) => {
     const inputProps = {
         endAdornment: icon ? (
-            <IconButton edge="end" onClick={handleClick}>
+            <IconButton edge="end" onClick={handleClick} style={{marginRight: "5px"}}>
                 {icon}
             </IconButton>
         ) : (

@@ -1,7 +1,7 @@
 'use client';
 import React, { useState } from 'react';
 import Link from 'next/link';
-import { MdOutlineSegment, MdSearch, MdAccountCircle, MdShoppingCart } from 'react-icons/md';
+import { MdOutlineSegment } from 'react-icons/md';
 import { IoMdClose } from 'react-icons/io';
 import { User, ShoppingCart, SearchNormal1 } from 'iconsax-react';
 import Backdrop from '@mui/material/Backdrop';
@@ -35,6 +35,7 @@ const Header = () => {
         { href: '/', label: 'Home' },
         { href: '/products', label: 'Products' },
         { href: '/contact-us', label: 'Contact Us' },
+        { href: '/login', label: 'Login' },
     ];
 
     return (
@@ -43,9 +44,9 @@ const Header = () => {
                 <div className="tw-flex tw-items-center tw-justify-between tw-w-full">
                     <h1 className="tw-font-[1000] tw-text-lg sm:tw-text-3xl tw-tracking-[0.2rem] tw-cursor-pointer" onClick={() => router.push('/')}>AB Store</h1>
                     <div className='tw-flex tw-gap-8'>
-                        <ul className="tw-flex lg:tw-gap-4 xl:tw-gap-8 tw-font-bold tw-text-lg tw-items-center">
+                        <ul className="tw-flex md:tw-gap-4 xl:tw-gap-8 tw-font-bold tw-text-lg tw-items-center">
                             {links.map(({ href, label }, index) => (
-                                <li key={index} className="tw-hidden lg:tw-block">
+                                <li key={index} className="tw-hidden md:tw-block">
                                     {href && (
                                         <Link href={href}>
                                             <span className={isActive(href) ? css.active : ''}>{label}</span>
@@ -62,7 +63,7 @@ const Header = () => {
                                 </div>
                             </div>
                         </ul>
-                        <button onClick={() => setIsMenuOpen(!isMenuOpen)} className="lg:tw-hidden tw-text-4xl tw-font-bold">
+                        <button onClick={() => setIsMenuOpen(!isMenuOpen)} className="md:tw-hidden tw-text-4xl tw-font-bold">
                             {isMenuOpen ? <IoMdClose /> : <MdOutlineSegment />}
                         </button>
                     </div>
@@ -70,7 +71,7 @@ const Header = () => {
             </nav>
 
             {isMenuOpen && (
-                <div className="lg:tw-hidden">
+                <div className="md:tw-hidden">
                     <ul className="tw-flex tw-flex-col tw-gap-3 tw-font-bold tw-text-xl tw-py-4">
                         {links.map(({ href, label }, index) => (
                             <li key={index}>
