@@ -6,7 +6,7 @@ import { CardTick, Heart, Location, Personalcard, TruckTick } from 'iconsax-reac
 const DashboardLayout = ({ children, counts }) => {
     return (
         <div className='md:tw-flex tw-flex-col md:tw-flex-row tw-my-10'>
-            <div className='md:tw-w-80 tw-bg-white tw-rounded-xl tw-min-h-[70vh] tw-py-5'>
+            <div className='tw-basis-80 tw-bg-white tw-rounded-xl tw-h-[70vh] tw-py-5'>
                 <h1 className='tw-text-icon tw-text-xl tw-font-bold tw-px-5'> Dashboard </h1>
                 {renderNavItem(TruckTick, 'Orders', counts?.orders)}
                 {renderNavItem(Heart, 'Wishlist', counts?.wishlist)}
@@ -15,7 +15,7 @@ const DashboardLayout = ({ children, counts }) => {
                 {renderNavItem(Location, 'Addresses', 4)}
                 {renderNavItem(CardTick, 'Payment-Methods', 2)}
             </div>
-            <div className='tw-w-full md:tw-flex-grow md:tw-pl-10 tw-mt-5 md:tw-mt-0'>
+            <div className='tw-basis-full md:tw-pl-10 tw-mt-5 md:tw-mt-0'>
                 {children}
             </div>
         </div>

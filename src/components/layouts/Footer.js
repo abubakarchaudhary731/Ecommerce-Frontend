@@ -8,7 +8,7 @@ const Footer = () => {
   return (
     <>
       <div className='tw-w-full tw-bg-secondary tw-text-whitee'>
-        <Container maxWidth="xl">
+        <div className='tw-px-5 md:tw-px-12 xl:tw-px-24'>
           <div className="tw-flex tw-py-10 tw-flex-col md:tw-flex-row tw-gap-4 md:tw-gap-0 tw-flex-wrap">
             <div className="tw-flex-1">
               <h2 className='tw-font-bold tw-text-2xl'> AB Store </h2>
@@ -45,7 +45,7 @@ const Footer = () => {
             <CopyRight />
           </div>
 
-        </Container>
+        </div>
       </div>
     </>
   )

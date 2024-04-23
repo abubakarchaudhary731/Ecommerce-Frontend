@@ -1,11 +1,12 @@
-import AppLayout from '@/components/theme/AppLayout';
 import React from 'react'
+import AppLayout from '@/components/theme/AppLayout';
+import Main from './_componenets/Main';
 
 const Contact = () => {
     return (
         <>
             <AppLayout>
-                This is Contact Us page
+                <Main />
             </AppLayout>
         </>
     )
