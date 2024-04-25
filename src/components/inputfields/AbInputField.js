@@ -41,8 +41,8 @@ const AbInputField = ({
             onChange={onChange}
             fullWidth={fullWidth}
             helperText={error ? (
-                <FormHelperText error>{error}</FormHelperText>
-            ) : ''}
+                <FormHelperText error component={'span'}>{error}</FormHelperText>
+            ) : null}
             type={type}
             color={color}
             InputProps={inputProps}
@@ -52,4 +52,4 @@ const AbInputField = ({
     );
 }
 
-export default AbInputField
+export default AbInputField;
