@@ -3,6 +3,8 @@ import React, { useState } from 'react'
 import MasterPage from '@/components/shared/MasterPage'
 import AbInputField from '@/components/inputfields/AbInputField';
 import { Eye, EyeSlash, Sms } from 'iconsax-react';
+import { useDispatch } from 'react-redux';
+import { loginUser } from '@/reduxtoolkit/slices/auth/LoginSlice';
 
 const Main = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -22,9 +24,10 @@ const Main = () => {
       [name]: value
     });
   };
+  const dispatch = useDispatch();
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log(data);
+    dispatch(loginUser(data));
   };
 
   return (
