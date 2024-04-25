@@ -14,7 +14,7 @@ const MasterPage = ({
 }) => {
     return (
         <>
-            <div className='md:tw-flex tw-justify-center tw-items-center md:tw-h-screen tw-w-full md:tw-mt-[-80px] md:tw-gap-2 lg:tw-gap-10  tw-mt-10'>
+            <div className='md:tw-flex tw-justify-center tw-items-center md:tw-min-h-screen tw-w-full md:tw-mt-[-80px] md:tw-gap-2 lg:tw-gap-10  tw-mt-10'>
                 <div className='md:tw-basis-[50%] lg:tw-basis-[60%]'>
                     <h1 className='tw-text-2xl lg:tw-text-5xl tw-font-bold tw-text-primary tw-mb-3 md:tw-mb-6'> {title} </h1>
                     <p> {description1} <br /> {description2} </p>

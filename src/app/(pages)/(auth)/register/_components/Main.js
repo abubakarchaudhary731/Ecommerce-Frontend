@@ -1,8 +1,12 @@
 'use client'
-import React, { useState } from 'react'
-import MasterPage from '@/components/shared/MasterPage'
+import React, { useState } from 'react';
+import MasterPage from '@/components/shared/MasterPage';
 import AbInputField from '@/components/inputfields/AbInputField';
 import { Eye, EyeSlash, Sms, User } from 'iconsax-react';
+import { registerUser } from '@/reduxtoolkit/slices/auth/RegisterSlice';
+import { useDispatch } from 'react-redux';
+import { useRouter } from 'next/navigation';
+import { addSnackbarData, resetSnackbar } from '@/reduxtoolkit/slices/SnakMessageSlice';
 
 const Main = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -13,7 +17,10 @@ const Main = () => {
     password: '',
     password_confirmation: ''
   });
+  const [errors, setErrors] = useState({});
 
+  const dispatch = useDispatch();
+  const router = useRouter();
   const handleClickShowPassword = () => setShowPassword(!showPassword);
   const handleClickShowConfirmPassword = () => setShowConfirmPassword(!showConfirmPassword);
 
@@ -24,9 +31,38 @@ const Main = () => {
       [name]: value
     });
   };
+
+  const validateForm = () => {
+    const errors = {};
+    if (!data.name) errors.name = 'Name is required';
+    if (!data.email) errors.email = 'Email is required';
+    if (!data.password) {
+      errors.password = 'Password is required';
+    } else if (data.password.length < 8) {
+      errors.password = 'Password must be at least 8 characters long';
+    }
+    if (!data.password_confirmation) errors.password_confirmation = 'Confirm Password is required';
+    if (data.password !== data.password_confirmation) errors.password_confirmation = 'Passwords do not match';
+    setErrors(errors);
+    return Object.keys(errors).length === 0;
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log(data);
+    if (validateForm()) {
+      dispatch(registerUser(data)).then((result) => {
+        if (!result.payload.id) {
+          dispatch(resetSnackbar());
+          dispatch(addSnackbarData({ message: result.payload.message, variant: 'error' })); 
+          setData({ name: data.name, email: '', password: data.password, password_confirmation: data.password_confirmation });
+        } else {
+          dispatch(resetSnackbar());
+          router.push('/login');
+          dispatch(addSnackbarData({ message: 'Account created successfully. Please login.', variant: 'success' })); 
+          setData({name: '', email: '', password: '', password_confirmation: ''});
+        }
+      });
+    }
   };
 
   return (
@@ -47,6 +83,7 @@ const Main = () => {
           variant='standard'
           value={data.name}
           onChange={handleChange}
+          error={errors.name}
         />
         <AbInputField
           label='Enter Your Email'
@@ -56,6 +93,7 @@ const Main = () => {
           variant='standard'
           value={data.email}
           onChange={handleChange}
+          error={errors.email}
         />
         <AbInputField
           label='Enter Your Password'
@@ -66,6 +104,7 @@ const Main = () => {
           icon={showPassword ? <Eye /> : <EyeSlash />}
           value={data.password}
           onChange={handleChange}
+          error={errors.password}
         />
         <AbInputField
           label='Confirm Password'
@@ -76,10 +115,11 @@ const Main = () => {
           icon={showConfirmPassword ? <Eye /> : <EyeSlash />}
           value={data.password_confirmation}
           onChange={handleChange}
+          error={errors.password_confirmation}
         />
       </MasterPage>
     </>
-  )
-}
+  );
+};
 
-export default Main
+export default Main;
