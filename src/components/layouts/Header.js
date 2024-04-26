@@ -47,10 +47,16 @@ const Header = () => {
                 return path.includes(pathName); // Return true if the path matches any of the given paths
             } else {
                 if (path === null) return false; // Handle null paths
-                return path === pathName; // Return true if the path matches the current path
+                if (path === '/products') {
+                    // Check if the current path starts with "/products"
+                    return pathName.startsWith('/products');
+                } else {
+                    return path === pathName; // Return true if the path matches the current path
+                }
             }
         }
     };
+    
     const handleLogout = () => {
         dispatch(logoutUser());
         dispatch(addSnackbarData({ message: 'Logged out successfully', variant: 'success' }));

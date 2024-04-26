@@ -1,15 +1,26 @@
 'use client';
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import SideBar from '@/components/layouts/SideBar'
 import ProductData from '@/components/ProductData';
 import ProductCard from '@/components/shared/ProductCard';
 import AbPagination from '@/components/inputfields/AbPagination';
 import AbInputField from '@/components/inputfields/AbInputField';
+import { useDispatch, useSelector } from 'react-redux';
+import { getProducts } from '@/reduxtoolkit/slices/products/ProductSlice';
 
 const Main = () => {
     const [currentPage, setCurrentPage] = useState(1);
+
+    //Get Products
+    const dispatch = useDispatch();
+    useEffect(() => {
+        dispatch(getProducts())
+    }, [dispatch]);
+    const { products } = useSelector((state) => state.Products);
+
+    //Apply pagination
     const itemsPerPage = 6;
-    const totalPages = Math.ceil(ProductData?.length / itemsPerPage);
+    const totalPages = Math.ceil(products?.length / itemsPerPage);
 
     const handlePageChange = (pageNumber) => {
         setCurrentPage(pageNumber);
@@ -18,7 +29,7 @@ const Main = () => {
     // Calculate current page items based on currentPage
     const indexOfLastItem = currentPage * itemsPerPage;
     const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-    const currentData = ProductData?.slice(indexOfFirstItem, indexOfLastItem);
+    const currentData = products?.slice(indexOfFirstItem, indexOfLastItem);
 
     return (
         <>
@@ -41,7 +52,7 @@ const Main = () => {
                         </div>
                         <div className='tw-flex tw-justify-between tw-flex-wrap tw-gap-5'>
                             {
-                                currentData.map((item, index) => (
+                                currentData?.map((item, index) => (
                                     <div key={index} className='tw-w-full sm:tw-w-[290px] xl:tw-w-[345px]'>
                                         <ProductCard
                                             item={item}

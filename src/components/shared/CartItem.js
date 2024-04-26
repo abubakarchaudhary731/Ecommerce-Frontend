@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
 import Image from 'next/image';
-import { useRouter } from 'next/navigation'; 
+import { useRouter } from 'next/navigation';
 import ClearIcon from '@mui/icons-material/Clear';
 import Checkbox from '@mui/material/Checkbox';
 import AbButton from '../inputfields/AbButton';
 import AbAlertDialog from '../inputfields/AbAlertDialog';
 import { ArrowDown2, ArrowUp2 } from 'iconsax-react';
+import QuantityButtons from './QuantityButtons';
 
 const CartItem = () => {
     const router = useRouter();
@@ -92,11 +93,7 @@ const CartItem = () => {
                                                 <p>$Price</p>
                                                 <p><b>X</b> Quantity = Total</p>
                                             </div>
-                                            <div className='tw-flex tw-gap-2 tw-items-center'>
-                                                <button className='tw-w-8 tw-text-2xl tw-border tw-border-primary tw-rounded-lg hover:tw-bg-primary hover:tw-text-whitee'>-</button>
-                                                <p>Quantity</p>
-                                                <button className='tw-w-8 tw-text-2xl tw-border tw-border-primary tw-rounded-lg hover:tw-bg-primary hover:tw-text-whitee'>+</button>
-                                            </div>
+                                            <QuantityButtons />
                                         </div>
                                     </div>
                                 </td>
