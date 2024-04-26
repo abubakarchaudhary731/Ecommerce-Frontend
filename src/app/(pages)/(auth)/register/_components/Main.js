@@ -53,13 +53,13 @@ const Main = () => {
       dispatch(registerUser(data)).then((result) => {
         if (!result.payload.id) {
           dispatch(resetSnackbar());
-          dispatch(addSnackbarData({ message: result.payload.message, variant: 'error' })); 
+          dispatch(addSnackbarData({ message: result.payload.message, variant: 'error' }));
           setData({ name: data.name, email: '', password: data.password, password_confirmation: data.password_confirmation });
         } else {
           dispatch(resetSnackbar());
           router.push('/login');
-          dispatch(addSnackbarData({ message: 'Account created successfully. Please login.', variant: 'success' })); 
-          setData({name: '', email: '', password: '', password_confirmation: ''});
+          dispatch(addSnackbarData({ message: 'Account created successfully. Please login.', variant: 'success' }));
+          setData({ name: '', email: '', password: '', password_confirmation: '' });
         }
       });
     }
