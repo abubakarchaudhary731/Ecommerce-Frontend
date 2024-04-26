@@ -27,6 +27,12 @@ const Header = () => {
             redirect('/login');
         }
     }, [token, pathName]);
+    useEffect(() => {
+        if (token && ['/login', '/register'].includes(pathName)) {
+            dispatch(addSnackbarData({ message: 'You are already logged in', variant: 'success' }));
+            redirect('/');
+        }
+    })
 
     const toggleSearch = () => {
         setIsMenuOpen(false);
