@@ -3,19 +3,18 @@ import axios from 'axios';
 
 let initialState = {
   user: "",
-  token: "",
+  token: null,
   loading: false,
-  errorLogin: null,
+  errors: null,
   message: null,
 };
 
 export const loginUser = createAsyncThunk('LoginUser', async (data, { rejectWithValue }) => {
   try {
     const response = await axios.post(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/auth/login`, data);
-
     return response.data;
   } catch (error) {
-    return rejectWithValue(error.message);
+    return error;
   }
 });
 
@@ -24,12 +23,16 @@ const LoginSlice = createSlice({
   name: "user",
   initialState,
   reducers: {
+    logoutUser: (state) => {
+      state.user = null;
+      state.token = null;
+    }
   },
   extraReducers: (builder) => {
     builder
       .addCase(loginUser.pending, (state) => {
         state.loading = true;
-        state.errorLogin = null;
+        state.errors = null;
       })
       .addCase(loginUser.fulfilled, (state, action) => {
         state.loading = false;
@@ -38,10 +41,10 @@ const LoginSlice = createSlice({
       })
       .addCase(loginUser.rejected, (state, action) => {
         state.loading = false;
-        state.errorLogin = action.payload.message;
+        state.errors = action.payload;
       });
   },
 });
 
-export const { addToken, addUser, clearErrorLogin } = LoginSlice.actions;
+export const { logoutUser } = LoginSlice.actions;
 export default LoginSlice.reducer;

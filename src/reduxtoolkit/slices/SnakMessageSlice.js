@@ -1,7 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit';
 
 let initialState = {
-    snackbarData: null,
+  snackbarData: null,
 };
 
 const SnakMessageSlice = createSlice({
@@ -9,14 +9,13 @@ const SnakMessageSlice = createSlice({
   initialState,
   reducers: {
     addSnackbarData: (state, action) => {
-        console.log(action.payload);
       state.snackbarData = action.payload;
     },
     resetSnackbar: (state) => {
-        state.snackbarData = null;
+      state.snackbarData = null;
     },
   },
- 
+
 });
 
 export const { addSnackbarData, resetSnackbar } = SnakMessageSlice.actions;

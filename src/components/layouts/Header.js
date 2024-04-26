@@ -1,18 +1,38 @@
 'use client';
-import React, { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { MdOutlineSegment } from 'react-icons/md';
 import { IoMdClose } from 'react-icons/io';
 import { User, ShoppingCart, SearchNormal1 } from 'iconsax-react';
+import { usePathname, useRouter, redirect } from 'next/navigation';
+import { useDispatch, useSelector } from 'react-redux';
+import { addSnackbarData } from '@/reduxtoolkit/slices/SnakMessageSlice';
 import Backdrop from '@mui/material/Backdrop';
 import css from '@/components/style.module.css';
-import { usePathname, useRouter } from 'next/navigation';
+import { logoutUser } from '@/reduxtoolkit/slices/auth/LoginSlice';
 
 const Header = () => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [showSearch, setShowSearch] = useState(false);
     const router = useRouter();
+    const dispatch = useDispatch();
     const pathName = usePathname();
+    // Protected Routes
+    const protectedRoutes = ['/cart', '/profile', '/orders', '/orderdetail', '/wishlist', '/addresses', '/payment-methods'];
+    const { token } = useSelector((state) => state.LoginUser);
+
+    useEffect(() => {
+        if (!token && protectedRoutes.includes(pathName)) {
+            dispatch(addSnackbarData({ message: 'Please login first', variant: 'error' }));
+            redirect('/login');
+        }
+    }, [token, pathName]);
+    useEffect(() => {
+        if (token && ['/login', '/register'].includes(pathName)) {
+            dispatch(addSnackbarData({ message: 'You are already logged in', variant: 'success' }));
+            redirect('/');
+        }
+    })
 
     const toggleSearch = () => {
         setIsMenuOpen(false);
@@ -26,16 +46,28 @@ const Header = () => {
             if (Array.isArray(path)) {
                 return path.includes(pathName); // Return true if the path matches any of the given paths
             } else {
-                return path === pathName; // Return true if the path matches the current path
+                if (path === null) return false; // Handle null paths
+                if (path === '/products') {
+                    // Check if the current path starts with "/products"
+                    return pathName.startsWith('/products');
+                } else {
+                    return path === pathName; // Return true if the path matches the current path
+                }
             }
         }
+    };
+    
+    const handleLogout = () => {
+        dispatch(logoutUser());
+        dispatch(addSnackbarData({ message: 'Logged out successfully', variant: 'success' }));
+        router.push('/login');
     };
 
     const links = [
         { href: '/', label: 'Home' },
         { href: '/products', label: 'Products' },
         { href: '/contact-us', label: 'Contact Us' },
-        { href: '/login', label: 'Login' },
+        { href: token ? null : '/login', label: token ? 'Logout' : 'Login', onClick: token ? handleLogout : null }, // Adjusted based on authentication status
     ];
 
     return (
@@ -45,12 +77,14 @@ const Header = () => {
                     <h1 className="tw-font-[1000] tw-text-lg sm:tw-text-3xl tw-tracking-[0.2rem] tw-cursor-pointer" onClick={() => router.push('/')}>AB Store</h1>
                     <div className='tw-flex tw-gap-8'>
                         <ul className="tw-flex md:tw-gap-4 xl:tw-gap-8 tw-font-bold tw-text-lg tw-items-center">
-                            {links.map(({ href, label }, index) => (
+                            {links.map(({ href, label, onClick }, index) => (
                                 <li key={index} className="tw-hidden md:tw-block">
-                                    {href && (
+                                    {href ? (
                                         <Link href={href}>
-                                            <span className={isActive(href) ? css.active : ''}>{label}</span>
+                                            <span className={isActive(href) ? css.active : ''} onClick={onClick}>{label}</span>
                                         </Link>
+                                    ) : (
+                                        <span onClick={onClick} className='tw-cursor-pointer'>{label}</span>
                                     )}
                                 </li>
                             ))}
@@ -73,11 +107,11 @@ const Header = () => {
             {isMenuOpen && (
                 <div className="md:tw-hidden">
                     <ul className="tw-flex tw-flex-col tw-gap-3 tw-font-bold tw-text-xl tw-py-4">
-                        {links.map(({ href, label }, index) => (
+                        {links.map(({ href, label, onClick }, index) => (
                             <li key={index}>
                                 {href && (
                                     <Link href={href}>
-                                        <span className={isActive(href) ? css.active : ''}>{label}</span>
+                                        <span className={isActive(href) ? css.active : ''} onClick={onClick}>{label}</span>
                                     </Link>
                                 )}
                             </li>

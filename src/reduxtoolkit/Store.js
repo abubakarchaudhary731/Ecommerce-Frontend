@@ -4,6 +4,7 @@ import storage from 'redux-persist/lib/storage';
 import RegisterSlice from './slices/auth/RegisterSlice';
 import LoginSlice from './slices/auth/LoginSlice';
 import SnakMessageSlice from './slices/SnakMessageSlice';
+import ProductSlice from './slices/products/ProductSlice';
 
 const persistConfig = {
   key: 'root',
@@ -15,6 +16,7 @@ const reducer = combineReducers({
   SnakMessages: SnakMessageSlice,
   RegisterUser: RegisterSlice,
   LoginUser: LoginSlice,
+  Products: ProductSlice
 });
 
 const persistedReducer = persistReducer(persistConfig, reducer);
