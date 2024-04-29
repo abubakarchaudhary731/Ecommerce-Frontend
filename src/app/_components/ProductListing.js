@@ -2,12 +2,13 @@
 import React from 'react';
 import Slider from 'react-slick';
 import ProductCard from '@/components/shared/ProductCard';
-import ProductData from '@/components/ProductData';
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import './style.css'; 
 
-const ProductListing = () => {
+const ProductListing = ({
+    products,
+}) => {
 
     const settings = {
         infinite: true,
@@ -35,7 +36,7 @@ const ProductListing = () => {
     return (
         <div className="tw-mb-20">
             <Slider {...settings} className='tw-flex tw-justify-between'>
-                {ProductData.map((item, index) => (
+                {products.map((item, index) => (
                     <div key={index} className='tw-px-2'>
                         <ProductCard 
                             item={item}

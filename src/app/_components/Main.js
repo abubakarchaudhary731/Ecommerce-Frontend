@@ -1,16 +1,19 @@
 'use client';
 import React from 'react'
 import Banner from './Banner'
-import ProductCard from '@/components/shared/ProductCard';
 import ProductListing from './ProductListing';
+import { useSelector } from 'react-redux';
 
 const Main = () => {
+  const { products } = useSelector((state) => state.Products);
   return (
     <>
-        <Banner />
-        <div>
-          <ProductListing />
-        </div>
+      <Banner />
+      <div>
+        <ProductListing 
+          products={products}
+        />
+      </div>
     </>
   )
 }

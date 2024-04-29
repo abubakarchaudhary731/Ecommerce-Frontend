@@ -1,86 +1,150 @@
 'use client';
-import React, { useState } from 'react';
-import Box from '@mui/material/Box';
-import Stepper from '@mui/material/Stepper';
-import Step from '@mui/material/Step';
-import StepLabel from '@mui/material/StepLabel';
-import Typography from '@mui/material/Typography';
+import React, { useEffect, useState } from 'react';
+import CartItem from '@/app/(pages)/cart/_components/CartItem';
+import AbAlertDialog from '@/components/inputfields/AbAlertDialog';
+import { useDispatch, useSelector } from 'react-redux';
 import AbButton from '@/components/inputfields/AbButton';
-import Cart from './Cart';
-import Checkout from './Checkout';
+import { useRouter } from 'next/navigation';
+import { getCartItems } from '@/reduxtoolkit/slices/cart/CartSlice';
 
-const steps = ['Add To Cart', 'Proceed to checkout', 'Confirm Order'];
+const Main = () => {
+    const router = useRouter();
+    const dispatch = useDispatch();
+    const { cartItems } = useSelector((state) => state.Cart);
+    const [openAlert, setOpenAlert] = useState(false);
+    const [selectAll, setSelectAll] = useState(false);
+    const [checkedItems, setCheckedItems] = useState(cartItems.map(item => item.id));
+    const [quantities, setQuantities] = useState({});
 
-export default function HorizontalLinearStepper() {
-    const [activeStep, setActiveStep] = useState(1);
+    useEffect(() => {
+        dispatch(getCartItems());
+    }, [dispatch])
+    
+    useEffect(() => {
+        const initialQuantities = {};
+        cartItems.forEach((item) => {
+            initialQuantities[item.id] = item.quantity || 1;
+        });
+        setQuantities(initialQuantities);
+    }, [cartItems]);
 
-    const handleNext = () => {
-        setActiveStep((prevActiveStep) => prevActiveStep + 1);
+    // ********************* Add and Subtract Quantity ********************** //
+    const handleAddition = (itemId) => {
+        setQuantities((prevQuantities) => ({
+            ...prevQuantities,
+            [itemId]: (prevQuantities[itemId] || 1) + 1,
+        }));
     };
 
-    const handleBack = () => {
-        setActiveStep((prevActiveStep) => prevActiveStep - 1);
+    const handleSubtraction = (itemId) => {
+        if (quantities[itemId] > 1) {
+            setQuantities((prevQuantities) => ({
+                ...prevQuantities,
+                [itemId]: prevQuantities[itemId] - 1,
+            }));
+        }
     };
 
-    const handleReset = () => {
-        setActiveStep(0);
+    // ************ Handle Alert Open ******************** //
+    const handleClickAlertOpen = () => {
+        setOpenAlert(true);
     };
+    const handleClickAlertClose = () => {
+        setOpenAlert(false);
+    };
+
+    // **************** Handle Header Checkbox Change ******************** //
+    const handleHeaderCheckboxChange = (event) => {
+        setSelectAll(!selectAll);
+        setCheckedItems(selectAll ? [] : cartItems.map((item) => item.id));
+    };
+
+    const handleBodyCheckboxChange = (e) => {
+        const itemId = parseInt(e.target.value);
+        setCheckedItems(prevCheckedItems => {
+            if (e.target.checked) {
+                return [...prevCheckedItems, itemId];
+            } else {
+                return prevCheckedItems.filter(item => item !== itemId);
+            }
+        });
+    };
+
+    // Calculate total of checked items
+    const checkedItemsTotal = checkedItems.reduce((acc, itemId) => {
+        const item = cartItems.find(item => item.id === itemId);
+        if (item) {
+            return acc + item.product.price * quantities[item.id];
+        } else {
+            return acc;
+        }
+    }, 0);
 
     return (
-        <div className='tw-my-10'>
-            <Stepper activeStep={activeStep}>
-                {steps.map((label, index) => {
-                    return (
-                        <Step key={index}>
-                            <StepLabel>{label}</StepLabel>
-                        </Step>
-                    );
-                })}
-            </Stepper>
-            {activeStep === steps.length ? (
-                <>
-                    <Typography sx={{ mt: 2, mb: 1 }}>
-                        Your Order has been Placed Successfully.
-                    </Typography>
-                    <Box sx={{ display: 'flex', flexDirection: 'row', pt: 2 }}>
-                        <Box sx={{ flex: '1 1 auto' }} />
-                        <div className='tw-w-24'>
+        <>
+            {
+                cartItems.length ? (
+                    <div className='tw-my-10'>
+                        <div className='lg:tw-flex'>
+
+                            <div className='tw-basis-full lg:tw-pr-10'>
+                                <CartItem
+                                    cartItems={cartItems}
+                                    quantities={quantities}
+                                    handleAddition={handleAddition}
+                                    handleSubtraction={handleSubtraction}
+                                    handleClickAlertOpen={handleClickAlertOpen}
+                                    checkedItems={checkedItems}
+                                    handleHeaderCheckboxChange={handleHeaderCheckboxChange}
+                                    handleBodyCheckboxChange={handleBodyCheckboxChange}
+                                />
+                            </div>
+
+                            <div className='tw-basis-96'>
+                                <div className='tw-bg-whitee tw-min-h-[70vh] tw-rounded-xl tw-px-5 tw-py-10 '>
+                                    <div className='tw-flex tw-flex-col tw-gap-3'>
+                                        {cartItems.map((item, index) => (
+                                            checkedItems.includes(item.id) && (
+                                                <div className='tw-flex tw-justify-between' key={index}>
+                                                    <p className='tw-text-icon tw-font-bold'>{item.product.name}</p>
+                                                    <p>${(item.product.price * (quantities[item.id] || 1)).toFixed(2)}</p>
+                                                </div>
+                                            )
+                                        ))}
+                                        <hr className='tw-border-icon' />
+                                        <div className='tw-flex tw-justify-between'>
+                                            <p className='tw-text-icon tw-font-bold'> Total: </p>
+                                            <p>${checkedItemsTotal.toFixed(2)}</p>
+                                        </div>
+                                        <hr className='tw-border-icon' />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {/* Alert dialog for deletion confirmation */}
+                        <AbAlertDialog
+                            open={openAlert}
+                            handleClose={handleClickAlertClose}
+                            title='Confirm Deletion'
+                            description='Are you sure you want to delete this item?'
+                        />
+                    </div>
+                ) : (
+                    <div className='tw-my-20'>
+                        <p className='tw-font-bold tw-text-center tw-text-4xl '> Your Cart is Empty </p>
+                        <div className='tw-flex tw-justify-center tw-mt-8'>
                             <AbButton
-                                label={'Reset'}
+                                label='Continue Shopping'
                                 contained={true}
-                                handleClick={handleReset}
+                                className='tw-px-4 tw-w-auto'
+                                handleClick={() => router.push('/products')}
                             />
                         </div>
-                    </Box>
-                </>
-            ) : (
-                <>
-
-                    {activeStep === 0 && <Cart />}
-                    {activeStep === 1 && <Cart />}
-                    {activeStep === 2 && <Checkout />}
-
-                    <Box sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', pt: 2 }}>
-                        <div>
-                            <AbButton
-                                label={'Back'}
-                                disabled={activeStep === 1}
-                                handleClick={handleBack}
-                                contained={true}
-                                className={'tw-px-4'}
-                            />
-
-                        </div>
-                        <div>
-                            <AbButton
-                                label={activeStep === steps.length - 1 ? 'Confirm Order' : `Proceed to Checkout`}
-                                handleClick={handleNext}
-                                className={'tw-px-4'}
-                            />
-                        </div>
-                    </Box>
-                </>
-            )}
-        </div>
+                    </div>
+                )
+            }
+        </>
     );
 }
+
+export default Main;

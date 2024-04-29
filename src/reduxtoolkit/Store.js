@@ -5,6 +5,7 @@ import RegisterSlice from './slices/auth/RegisterSlice';
 import LoginSlice from './slices/auth/LoginSlice';
 import SnakMessageSlice from './slices/SnakMessageSlice';
 import ProductSlice from './slices/products/ProductSlice';
+import CartSlice from './slices/cart/CartSlice';
 
 const persistConfig = {
   key: 'root',
@@ -16,7 +17,8 @@ const reducer = combineReducers({
   SnakMessages: SnakMessageSlice,
   RegisterUser: RegisterSlice,
   LoginUser: LoginSlice,
-  Products: ProductSlice
+  Products: ProductSlice,
+  Cart: CartSlice,
 });
 
 const persistedReducer = persistReducer(persistConfig, reducer);

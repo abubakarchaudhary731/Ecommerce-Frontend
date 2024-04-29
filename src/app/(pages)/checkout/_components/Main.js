@@ -1,9 +1,10 @@
+'use client'
 import React, { useState } from 'react'
 import AbRadioField from '@/components/inputfields/AbRadioField';
 import AddressForm from '@/components/shared/forms/AddressForm'
 import PaymentForm from '@/components/shared/forms/PaymentForm';
 
-const Checkout = () => {
+const Main = () => {
   const [address, setAddress] = useState({
     country: '',
     state: '',
@@ -139,4 +140,4 @@ const Checkout = () => {
   )
 }
 
-export default Checkout
+export default Main

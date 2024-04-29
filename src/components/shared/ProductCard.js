@@ -7,8 +7,9 @@ import AbButton from '@/components/inputfields/AbButton';
 import { IconButton } from '@mui/material';
 import { ArrowRight, Heart } from 'iconsax-react';
 import { useRouter } from 'next/navigation';
-import { useDispatch } from 'react-redux';
-import { getSingleProduct } from '@/reduxtoolkit/slices/products/ProductSlice';
+import { useDispatch, useSelector } from 'react-redux';
+import { addSnackbarData } from '@/reduxtoolkit/slices/SnakMessageSlice';
+import { addToCart } from '@/reduxtoolkit/slices/cart/CartSlice';
 
 const ProductCard = ({ item }) => {
     const [isClicked, setIsClicked] = useState(false);
@@ -39,6 +40,22 @@ const ProductCard = ({ item }) => {
             return item.price;
         }
     };
+
+    // Add to cart
+    const { token } = useSelector((state) => state.LoginUser);
+    const productAddToCart = (id) => {
+        if (token) {
+            dispatch(addToCart({ product_id: id })).then((result) => {
+                if (result?.payload?.id || result?.payload?.cart) {
+                    dispatch(addSnackbarData({ message: 'Added To Cart', variant: 'success' }));
+                } else {
+                    dispatch(addSnackbarData({ message: "Something went wrong", variant: 'error' }));
+                }
+            });
+        } else {
+            dispatch(addSnackbarData({ message: 'Please Login First', variant: 'error' }));
+        }
+    }
 
     return (
         <Card>
@@ -83,6 +100,7 @@ const ProductCard = ({ item }) => {
                     type={"button"}
                     label={"Add to Cart"}
                     className="tw-mt-3"
+                    handleClick={() => productAddToCart(item.id)}
                 />
             </CardContent>
         </Card>
