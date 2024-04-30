@@ -41,7 +41,7 @@ const AbTable = ({ data, columns, icon, clickOnIcon }) => {
                                     key={colIndex}
                                     className='tw-py-5 tw-text-sm tw-font-bold tw-text-blackk tw-px-3'
                                 >
-                                    {row[column.key]}
+                                    {row[column.key] || 'Not Available'} 
                                 </td>
                             ))}
                             {icon && (
