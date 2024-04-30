@@ -136,7 +136,7 @@ const Main = () => {
                             </div>
 
                             <div className='tw-basis-96'>
-                                <div className='tw-bg-whitee tw-min-h-[70vh] tw-rounded-xl tw-px-5 tw-py-10 '>
+                                <div className='tw-bg-whitee lg:tw-min-h-[70vh] tw-rounded-xl tw-px-5 tw-py-10 '>
                                     <div className='tw-flex tw-flex-col tw-gap-3'>
                                         {cartItems?.map((item, index) => (
                                             checkedItems.includes(item.id) && (
@@ -155,6 +155,20 @@ const Main = () => {
                                     </div>
                                 </div>
                             </div>
+                        </div>
+                        <div className='tw-mt-5 tw-flex tw-flex-col tw-gap-2 sm:tw-flex-row sm:tw-justify-between'>
+                            <AbButton
+                                label='Continue Shopping'
+                                contained={true}
+                                className='tw-px-4 tw-max-w-60'
+                                handleClick={() => router.push('/products')}
+                            />
+                            <AbButton
+                                label={`Proceed to Checkout (${checkedItems.length})`}
+                                className='tw-px-4 tw-max-w-60'
+                                handleClick={() => router.push('/checkout')}
+                                disabled={!checkedItems.length}
+                            />
                         </div>
                         {/* Alert dialog for deletion confirmation */}
                         <AbAlertDialog
