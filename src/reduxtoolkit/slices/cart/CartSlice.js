@@ -56,6 +56,22 @@ export const deleteCartItem = createAsyncThunk("deleteCartItem", async (id) => {
     }
 });
 
+// ****************** Update CART Item ********************* //
+export const updateCartItem = createAsyncThunk("updateCartItem", async (data) => {
+    console.log(data);
+    const token = store.getState().LoginUser.token
+    try {
+        const response = await axios.post(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/v1/cart/update/${data.id}`, data, {
+            headers: {
+                "Authorization": `Bearer ${token}`,
+            },
+        });
+        return response.data;
+    } catch (error) {
+        return error.message;
+    }
+});
+
 const CartSlice = createSlice({
     name: "CartSlice",
     initialState,
@@ -78,6 +94,7 @@ const CartSlice = createSlice({
                 state.loading = false;
                 state.error = action.payload;
             })
+
             // ****************** Get CART Items ********************* //
             .addCase(getCartItems.pending, (state) => {
                 state.loading = true;
@@ -93,6 +110,7 @@ const CartSlice = createSlice({
                 state.loading = false;
                 state.error = action.payload;
             })
+
             // ****************** Delete CART Item ********************* //
             .addCase(deleteCartItem.pending, (state) => {
                 state.loading = true;
@@ -105,6 +123,22 @@ const CartSlice = createSlice({
             })
 
             .addCase(deleteCartItem.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.payload;
+            })
+
+            // ****************** Update CART Item ********************* //
+            .addCase(updateCartItem.pending, (state) => {
+                state.loading = true;
+                state.error = null;
+            })
+
+            .addCase(updateCartItem.fulfilled, (state, action) => {
+                state.loading = false;
+                state.message = action.payload.message;
+            })
+
+            .addCase(updateCartItem.rejected, (state, action) => {
                 state.loading = false;
                 state.error = action.payload;
             })

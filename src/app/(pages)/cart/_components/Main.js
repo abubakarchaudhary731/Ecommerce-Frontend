@@ -5,22 +5,25 @@ import AbAlertDialog from '@/components/inputfields/AbAlertDialog';
 import { useDispatch, useSelector } from 'react-redux';
 import AbButton from '@/components/inputfields/AbButton';
 import { useRouter } from 'next/navigation';
-import { deleteCartItem, getCartItems } from '@/reduxtoolkit/slices/cart/CartSlice';
+import { deleteCartItem, getCartItems, updateCartItem } from '@/reduxtoolkit/slices/cart/CartSlice';
 import { addSnackbarData } from '@/reduxtoolkit/slices/SnakMessageSlice';
 
 const Main = () => {
     const router = useRouter();
     const dispatch = useDispatch();
     const { cartItems } = useSelector((state) => state.Cart);
+    const { token } = useSelector((state) => state.LoginUser);
     const [openAlert, setOpenAlert] = useState(false);
     const [deleteId, setDeleteId] = useState(null);
     const [selectAll, setSelectAll] = useState(false);
-    const [checkedItems, setCheckedItems] = useState(cartItems.map(item => item.id));
+    const [checkedItems, setCheckedItems] = useState(cartItems?.map(item => item.id));
     const [quantities, setQuantities] = useState({});
 
     useEffect(() => {
-        dispatch(getCartItems());
-    }, [dispatch])
+        if (token) {
+            dispatch(getCartItems());
+        }
+    }, [dispatch, token])
 
     useEffect(() => {
         const initialQuantities = {};
@@ -36,6 +39,14 @@ const Main = () => {
             ...prevQuantities,
             [itemId]: (prevQuantities[itemId] || 1) + 1,
         }));
+        dispatch(updateCartItem({ id: itemId, quantity: quantities[itemId] + 1 })).then((result) => {
+            if (!result?.payload?.message) {
+                dispatch(addSnackbarData({ message: "Something went wrong", variant: 'error' }));
+                dispatch(getCartItems());
+            } else {
+                dispatch(getCartItems());
+            }
+        });
     };
 
     const handleSubtraction = (itemId) => {
@@ -44,6 +55,14 @@ const Main = () => {
                 ...prevQuantities,
                 [itemId]: prevQuantities[itemId] - 1,
             }));
+            dispatch(updateCartItem({ id: itemId, quantity: quantities[itemId] - 1 })).then((result) => {
+                if (!result?.payload?.message) {
+                    dispatch(addSnackbarData({ message: "Something went wrong", variant: 'error' }));
+                    dispatch(getCartItems());
+                } else {
+                    dispatch(getCartItems());
+                }
+            });
         }
     };
 
@@ -87,7 +106,7 @@ const Main = () => {
     };
 
     // Calculate total of checked items
-    const checkedItemsTotal = checkedItems.reduce((acc, itemId) => {
+    const checkedItemsTotal = checkedItems?.reduce((acc, itemId) => {
         const item = cartItems.find(item => item.id === itemId);
         if (item) {
             return acc + item.product.price * quantities[item.id];
@@ -119,7 +138,7 @@ const Main = () => {
                             <div className='tw-basis-96'>
                                 <div className='tw-bg-whitee tw-min-h-[70vh] tw-rounded-xl tw-px-5 tw-py-10 '>
                                     <div className='tw-flex tw-flex-col tw-gap-3'>
-                                        {cartItems.map((item, index) => (
+                                        {cartItems?.map((item, index) => (
                                             checkedItems.includes(item.id) && (
                                                 <div className='tw-flex tw-justify-between' key={index}>
                                                     <p className='tw-text-icon tw-font-bold'>{item.product.name}</p>

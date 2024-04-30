@@ -51,7 +51,7 @@ const CartItem = ({
                 {showTableBody && (
                     <tbody className='tw-transition-opacity tw-duration-1000 tw-opacity-100'>
                         {/* Mapping through cart items */}
-                        {cartItems.map((item, index) => (
+                        {cartItems?.map((item, index) => (
                             <tr key={index} className='tw-flex tw-gap-2 tw-items-center'>
                                 <td>
                                     {/* Checkbox for each item */}

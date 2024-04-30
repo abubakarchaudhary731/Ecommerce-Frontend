@@ -10,6 +10,7 @@ import { addSnackbarData } from '@/reduxtoolkit/slices/SnakMessageSlice';
 import Backdrop from '@mui/material/Backdrop';
 import css from '@/components/style.module.css';
 import { logoutUser } from '@/reduxtoolkit/slices/auth/LoginSlice';
+import { getCartItems } from '@/reduxtoolkit/slices/cart/CartSlice';
 
 const Header = () => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -20,6 +21,14 @@ const Header = () => {
     // Protected Routes
     const protectedRoutes = ['/cart', '/profile', '/orders', '/orderdetail', '/wishlist', '/addresses', '/payment-methods'];
     const { token } = useSelector((state) => state.LoginUser);
+    const { cartItems } = useSelector((state) => state.Cart);
+    const cartItemCount = cartItems?.length;
+
+    useEffect(() => {
+        if (token) {
+            dispatch(getCartItems());
+        }
+    }, [token, dispatch]);
 
     useEffect(() => {
         if (!token && protectedRoutes.includes(pathName)) {
@@ -56,7 +65,7 @@ const Header = () => {
             }
         }
     };
-    
+
     const handleLogout = () => {
         dispatch(logoutUser());
         dispatch(addSnackbarData({ message: 'Logged out successfully', variant: 'success' }));
@@ -93,7 +102,9 @@ const Header = () => {
                                 <User className={isActive(['/profile', '/orders', '/wishlist', '/addresses', '/payment-methods', '/orderdetail']) ? css.active : 'tw-cursor-pointer'} onClick={() => router.push('/profile')} />
                                 <div className="tw-relative tw-cursor-pointer" onClick={() => router.push('/cart')}>
                                     <ShoppingCart className={isActive('/cart') ? css.active : ''} />
-                                    <div className="tw-absolute tw-bottom-4 tw-left-5 tw-w-5 tw-h-5 tw-flex tw-items-center tw-justify-center tw-bg-red-500 tw-text-white tw-rounded-full tw-text-xs">4</div>
+                                    {
+                                        token && cartItemCount > 0 && <div className="tw-absolute tw-bottom-4 tw-left-5 tw-w-5 tw-h-5 tw-flex tw-items-center tw-justify-center tw-bg-red-500 tw-text-white tw-rounded-full tw-text-xs"> {cartItemCount} </div>
+                                    }
                                 </div>
                             </div>
                         </ul>
