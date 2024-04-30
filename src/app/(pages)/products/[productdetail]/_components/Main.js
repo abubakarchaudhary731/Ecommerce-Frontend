@@ -8,6 +8,8 @@ import './style.css';
 import { getSingleProduct } from "@/reduxtoolkit/slices/products/ProductSlice";
 import { useParams } from "next/navigation";
 import QuantityButtons from "@/components/shared/QuantityButtons";
+import { addToCart } from "@/reduxtoolkit/slices/cart/CartSlice";
+import { addSnackbarData } from "@/reduxtoolkit/slices/SnakMessageSlice";
 
 const Main = () => {
     const [quantity, setQuantity] = useState(1);
@@ -19,6 +21,7 @@ const Main = () => {
     }, [dispatch]);
 
     const { singleProduct } = useSelector((state) => state.Products);
+    const { token } = useSelector((state) => state.LoginUser);
 
     const discountedPrice = (item) => {
         if (item.discount && item.discount.is_active === 1) {
@@ -38,8 +41,18 @@ const Main = () => {
         }
     };
 
-    const addToCart = () => {
-        console.log("Added to cart");
+    const handleAddToCart = () => {
+        if (token) {
+            dispatch(addToCart({ product_id: singleProduct?.id, quantity: quantity })).then((result) => {
+                if (result?.payload?.id || result?.payload?.cart) {
+                    dispatch(addSnackbarData({ message: 'Added To Cart', variant: 'success' }));
+                } else {
+                    dispatch(addSnackbarData({ message: "Something went wrong", variant: 'error' }));
+                }
+            });
+        } else {
+            dispatch(addSnackbarData({ message: 'Please Login First', variant: 'error' }));
+        }
     };
 
     return (
@@ -93,7 +106,7 @@ const Main = () => {
                             handleSubtraction={handleSubtraction}
                         />
                     </div>
-                    <button className="tw-w-full tw-mt-5 tw-flex tw-items-center tw-justify-center tw-gap-2 tw-py-4 tw-rounded-full tw-bg-black tw-text-white tw-text-lg" onClick={addToCart}>
+                    <button className="tw-w-full tw-mt-5 tw-flex tw-items-center tw-justify-center tw-gap-2 tw-py-4 tw-rounded-full tw-bg-black tw-text-white tw-text-lg" onClick={handleAddToCart}>
                         Add to Cart
                         <ShoppingCart />
                     </button>

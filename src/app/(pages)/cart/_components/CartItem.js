@@ -1,56 +1,41 @@
-import React, { useState } from 'react';
-import Image from 'next/image';
+import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import ClearIcon from '@mui/icons-material/Clear';
 import Checkbox from '@mui/material/Checkbox';
-import AbButton from '../inputfields/AbButton';
-import AbAlertDialog from '../inputfields/AbAlertDialog';
+import AbButton from '../../../../components/inputfields/AbButton';
+import AbAlertDialog from '../../../../components/inputfields/AbAlertDialog';
 import { ArrowDown2, ArrowUp2 } from 'iconsax-react';
-import QuantityButtons from './QuantityButtons';
+import QuantityButtons from '../../../../components/shared/QuantityButtons';
 
-const CartItem = () => {
+const CartItem = ({
+    cartItems,
+    quantities,
+    handleAddition,
+    handleSubtraction,
+    handleClickAlertOpen,
+    checkedItems,
+    handleHeaderCheckboxChange,
+    handleBodyCheckboxChange
+}) => {
     const router = useRouter();
-    const [open, setOpen] = useState(false);
     const [showTableBody, setShowTableBody] = useState(false);
-    const [checkedItems, setCheckedItems] = useState([]);
 
     const toggleTableBody = () => {
         setShowTableBody(!showTableBody);
     };
 
-    const handleHeaderCheckboxChange = (event) => {
-        const { checked } = event.target;
-        if (checked) {
-            const ids = [1, 2, 3, 4, 5, 6, 7, 8].map((item) => item.toString());
-            setCheckedItems(ids);
-        } else {
-            setCheckedItems([]);
-        }
-    };
-
-    const handleBodyCheckboxChange = (id, isChecked) => {
-        if (isChecked) {
-            setCheckedItems((prevChecked) => [...prevChecked, id]);
-        } else {
-            setCheckedItems((prevChecked) => prevChecked.filter((itemId) => itemId !== id));
-        }
-    };
-
-    const handleClickOpen = () => {
-        setOpen(true);
-    };
-
-    const handleClose = () => {
-        setOpen(false);
-    };
-
     return (
-        <div> {/* Enclose the entire content in a div */}
+        <div>
             <table className='tw-w-full'>
+                {/* Table header */}
                 <thead>
+                    {/* Header row */}
                     <tr className='tw-flex tw-gap-2'>
                         <td>
-                            <Checkbox onChange={handleHeaderCheckboxChange} />
+                            <Checkbox
+                                onChange={handleHeaderCheckboxChange}
+                                checked={checkedItems.length ? true : false}
+                            />
                         </td>
                         <td
                             className='tw-w-full tw-bg-whitee tw-rounded-xl tw-mb-3 tw-shadow-md tw-py-3 tw-px-8 tw-font-bold tw-flex tw-justify-between tw-items-center'
@@ -62,38 +47,48 @@ const CartItem = () => {
                         </td>
                     </tr>
                 </thead>
+                {/* Table body */}
                 {showTableBody && (
                     <tbody className='tw-transition-opacity tw-duration-1000 tw-opacity-100'>
-                        {[1, 2, 3, 4, 5, 6, 7, 8].map((item, index) => (
+                        {/* Mapping through cart items */}
+                        {cartItems?.map((item, index) => (
                             <tr key={index} className='tw-flex tw-gap-2 tw-items-center'>
                                 <td>
+                                    {/* Checkbox for each item */}
                                     <Checkbox
-                                        onChange={(e) => handleBodyCheckboxChange(item.toString(), e.target.checked)}
-                                        checked={checkedItems.includes(item.toString())}
+                                        checked={Array.from(checkedItems).includes(item.id)}
+                                        onChange={handleBodyCheckboxChange}
+                                        value={item.id}
                                     />
                                 </td>
                                 <td className='tw-w-full tw-bg-whitee tw-rounded-xl sm:tw-flex tw-items-center tw-mb-3 tw-shadow-sm'>
+                                    {/* Item details */}
                                     <div className='tw-basis-44'>
-                                        <Image
-                                            src={'/images/static/emelie.jpg'}
+                                        <img
+                                            src={item.product.thumbnail}
                                             alt='Product Image'
                                             width={130}
                                             height={100}
-                                            className='tw-rounded-l-xl'
+                                            className='tw-rounded-l-xl tw-w-32 tw-h-28 tw-object-cover'
                                         />
                                     </div>
                                     <div className='tw-basis-full tw-pl-2 tw-pr-2 sm:tw-pr-10'>
                                         <div className='tw-flex tw-justify-between tw-items-center tw-text-lg'>
-                                            <h1 className='tw-font-bold'>Product Name</h1>
-                                            <ClearIcon className='tw-cursor-pointer tw-text-icon' onClick={handleClickOpen} />
+                                            <h1 className='tw-font-bold'> {item.product.name} </h1>
+                                            <ClearIcon className='tw-cursor-pointer tw-text-icon' onClick={()=> handleClickAlertOpen(item.id)} />
                                         </div>
                                         <br />
                                         <div className='tw-text-sm tw-flex tw-justify-between tw-items-center tw-flex-wrap'>
                                             <div className='tw-flex tw-gap-2 tw-text-icon'>
-                                                <p>$Price</p>
-                                                <p><b>X</b> Quantity = Total</p>
+                                                <p>${item.product.price}</p>
+                                                <p><b>X</b> {quantities[item.id]} = ${item.product.price * (quantities[item.id] || 1)} </p>
                                             </div>
-                                            <QuantityButtons />
+                                            {/* Quantity buttons */}
+                                            <QuantityButtons
+                                                quantity={quantities[item.id]}
+                                                handleAddition={() => handleAddition(item.id)}
+                                                handleSubtraction={() => handleSubtraction(item.id)}
+                                            />
                                         </div>
                                     </div>
                                 </td>
@@ -102,6 +97,7 @@ const CartItem = () => {
                     </tbody>
                 )}
             </table>
+            {/* Continue shopping button */}
             <div className='tw-mt-10'>
                 <div className='tw-flex tw-justify-between'>
                     <div></div>
@@ -115,12 +111,7 @@ const CartItem = () => {
                     </div>
                 </div>
             </div>
-            <AbAlertDialog
-                open={open}
-                handleClose={handleClose}
-                title='Confirm Deletion'
-                description='Are you sure you want to delete this item?'
-            />
+
         </div>
     );
 };
