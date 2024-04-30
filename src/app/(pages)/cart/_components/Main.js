@@ -5,13 +5,15 @@ import AbAlertDialog from '@/components/inputfields/AbAlertDialog';
 import { useDispatch, useSelector } from 'react-redux';
 import AbButton from '@/components/inputfields/AbButton';
 import { useRouter } from 'next/navigation';
-import { getCartItems } from '@/reduxtoolkit/slices/cart/CartSlice';
+import { deleteCartItem, getCartItems } from '@/reduxtoolkit/slices/cart/CartSlice';
+import { addSnackbarData } from '@/reduxtoolkit/slices/SnakMessageSlice';
 
 const Main = () => {
     const router = useRouter();
     const dispatch = useDispatch();
     const { cartItems } = useSelector((state) => state.Cart);
     const [openAlert, setOpenAlert] = useState(false);
+    const [deleteId, setDeleteId] = useState(null);
     const [selectAll, setSelectAll] = useState(false);
     const [checkedItems, setCheckedItems] = useState(cartItems.map(item => item.id));
     const [quantities, setQuantities] = useState({});
@@ -19,7 +21,7 @@ const Main = () => {
     useEffect(() => {
         dispatch(getCartItems());
     }, [dispatch])
-    
+
     useEffect(() => {
         const initialQuantities = {};
         cartItems.forEach((item) => {
@@ -46,11 +48,25 @@ const Main = () => {
     };
 
     // ************ Handle Alert Open ******************** //
-    const handleClickAlertOpen = () => {
+    const handleClickAlertOpen = (id) => {
         setOpenAlert(true);
+        setDeleteId(id);
     };
     const handleClickAlertClose = () => {
         setOpenAlert(false);
+        setDeleteId(null);
+    };
+    const handleOnConfirm = () => {
+        dispatch(deleteCartItem(deleteId)).then((result) => {
+            if (result?.payload?.message) {
+                dispatch(getCartItems());
+                dispatch(addSnackbarData({ message: result?.payload?.message, variant: 'success' }));
+            } else {
+                dispatch(addSnackbarData({ message: 'Something went wrong', variant: 'error' }));
+            }
+        });
+        setOpenAlert(false);
+        setDeleteId(null);
     };
 
     // **************** Handle Header Checkbox Change ******************** //
@@ -93,7 +109,7 @@ const Main = () => {
                                     quantities={quantities}
                                     handleAddition={handleAddition}
                                     handleSubtraction={handleSubtraction}
-                                    handleClickAlertOpen={handleClickAlertOpen}
+                                    handleClickAlertOpen={(id) => handleClickAlertOpen(id)}
                                     checkedItems={checkedItems}
                                     handleHeaderCheckboxChange={handleHeaderCheckboxChange}
                                     handleBodyCheckboxChange={handleBodyCheckboxChange}
@@ -124,6 +140,7 @@ const Main = () => {
                         {/* Alert dialog for deletion confirmation */}
                         <AbAlertDialog
                             open={openAlert}
+                            onConfirm={() => handleOnConfirm()}
                             handleClose={handleClickAlertClose}
                             title='Confirm Deletion'
                             description='Are you sure you want to delete this item?'
@@ -131,12 +148,12 @@ const Main = () => {
                     </div>
                 ) : (
                     <div className='tw-my-20'>
-                        <p className='tw-font-bold tw-text-center tw-text-4xl '> Your Cart is Empty </p>
+                        <p className='tw-font-bold tw-text-center tw-text-3xl sm:tw-text-4xl '> Your Cart is Empty </p>
                         <div className='tw-flex tw-justify-center tw-mt-8'>
                             <AbButton
                                 label='Continue Shopping'
                                 contained={true}
-                                className='tw-px-4 tw-w-auto'
+                                className='tw-px-4 tw-max-w-52'
                                 handleClick={() => router.push('/products')}
                             />
                         </div>

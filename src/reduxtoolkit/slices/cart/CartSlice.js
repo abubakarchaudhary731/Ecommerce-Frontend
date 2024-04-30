@@ -41,6 +41,21 @@ export const getCartItems = createAsyncThunk("getCartItems", async () => {
     }
 });
 
+// ****************** Delete CART Item ********************* //
+export const deleteCartItem = createAsyncThunk("deleteCartItem", async (id) => {
+    const token = store.getState().LoginUser.token
+    try {
+        const response = await axios.post(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/v1/cart/delete/${id}`,{}, {
+            headers: {
+                "Authorization": `Bearer ${token}`,
+            },
+        });
+        return response.data;
+    } catch (error) {
+        return error.message;
+    }
+});
+
 const CartSlice = createSlice({
     name: "CartSlice",
     initialState,
@@ -77,10 +92,23 @@ const CartSlice = createSlice({
             .addCase(getCartItems.rejected, (state, action) => {
                 state.loading = false;
                 state.error = action.payload;
-            });
+            })
+            // ****************** Delete CART Item ********************* //
+            .addCase(deleteCartItem.pending, (state) => {
+                state.loading = true;
+                state.error = null;
+            })
 
+            .addCase(deleteCartItem.fulfilled, (state, action) => {
+                state.loading = false;
+                state.message = action.payload.message;
+            })
+
+            .addCase(deleteCartItem.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.payload;
+            })
     },
 });
 
-// export const { } = AddToCartSlice.actions;
 export default CartSlice.reducer;
