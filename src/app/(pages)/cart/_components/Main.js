@@ -7,6 +7,7 @@ import AbButton from '@/components/inputfields/AbButton';
 import { useRouter } from 'next/navigation';
 import { deleteCartItem, getCartItems, updateCartItem } from '@/reduxtoolkit/slices/cart/CartSlice';
 import { addSnackbarData } from '@/reduxtoolkit/slices/SnakMessageSlice';
+import { proceedToCheckout } from '@/reduxtoolkit/slices/cart/CheckoutSlice';
 
 const Main = () => {
     const router = useRouter();
@@ -75,6 +76,8 @@ const Main = () => {
         setOpenAlert(false);
         setDeleteId(null);
     };
+
+    // ******************* Delete Cart Items ****************** //
     const handleOnConfirm = () => {
         dispatch(deleteCartItem(deleteId)).then((result) => {
             if (result?.payload?.message) {
@@ -105,7 +108,7 @@ const Main = () => {
         });
     };
 
-    // Calculate total of checked items
+    // ******************** Calculate total of checked items *********************** //
     const checkedItemsTotal = checkedItems?.reduce((acc, itemId) => {
         const item = cartItems.find(item => item.id === itemId);
         if (item) {
@@ -114,6 +117,21 @@ const Main = () => {
             return acc;
         }
     }, 0);
+
+    // ******************** Proceed To Checkout *********************** //
+    const handleCheckout = () => {
+        if (checkedItems.length === 0) {
+            dispatch(addSnackbarData({ message: 'Please select at least one item', variant: 'error' }));
+            return;
+        }
+        dispatch(proceedToCheckout({ cart_ids: checkedItems })).then((result) => {
+            if (!result?.payload?.products) {
+                dispatch(addSnackbarData({ message: 'Something went wrong', variant: 'error' }));
+            } else {
+                router.push('/checkout')
+            }
+        });
+    };
 
     return (
         <>
@@ -166,8 +184,8 @@ const Main = () => {
                             <AbButton
                                 label={`Proceed to Checkout (${checkedItems.length})`}
                                 className='tw-px-4 tw-max-w-60'
-                                handleClick={() => router.push('/checkout')}
-                                disabled={!checkedItems.length}
+                                handleClick={handleCheckout}
+                            // disabled={!checkedItems.length}
                             />
                         </div>
                         {/* Alert dialog for deletion confirmation */}

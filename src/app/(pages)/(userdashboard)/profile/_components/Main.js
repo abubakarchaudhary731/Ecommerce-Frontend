@@ -21,7 +21,7 @@ const Main = () => {
     { key: 'email', label: 'Email' },
     { key: 'phone', label: 'Phone' },
   ];
-  
+
   return (
     <>
       <div className='tw-flex tw-justify-between tw-items-center'>
@@ -45,8 +45,8 @@ const Main = () => {
               className='tw-rounded-full '
             />
             <div>
-              <p className='tw-font-bold tw-text-lg'> {user.name} </p>
-              <p className='tw-text-sm tw-text-icon'>{user.email}</p>
+              <p className='tw-font-bold tw-text-lg'> {user?.name} </p>
+              <p className='tw-text-sm tw-text-icon'>{user?.email}</p>
             </div>
           </div>
         </div>
@@ -69,13 +69,16 @@ const Main = () => {
         </div>
       </div>
       {/* *************************** Table ************************* */}
-      <div className='tw-mt-5'>
-        <AbTable
-          data={[user]}
-          columns={column}
-        />
-      </div>
-
+      {
+        user && (
+          <div className='tw-mt-5'>
+            <AbTable
+              data={[user]}
+              columns={column}
+            />
+          </div>
+        )
+      }
       <AbModal
         title='Edit Profile'
         open={openModal}

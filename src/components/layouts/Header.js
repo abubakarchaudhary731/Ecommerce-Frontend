@@ -11,6 +11,7 @@ import Backdrop from '@mui/material/Backdrop';
 import css from '@/components/style.module.css';
 import { logoutUser } from '@/reduxtoolkit/slices/auth/LoginSlice';
 import { getCartItems } from '@/reduxtoolkit/slices/cart/CartSlice';
+import { resetCheckoutState } from '@/reduxtoolkit/slices/cart/CheckoutSlice';
 
 const Header = () => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -19,7 +20,7 @@ const Header = () => {
     const dispatch = useDispatch();
     const pathName = usePathname();
     // Protected Routes
-    const protectedRoutes = ['/cart', '/profile', '/orders', '/orderdetail', '/wishlist', '/addresses', '/payment-methods'];
+    const protectedRoutes = ['/cart', '/checkout', '/profile', '/orders', '/orderdetail', '/wishlist', '/addresses', '/payment-methods'];
     const { token } = useSelector((state) => state.LoginUser);
     const { cartItems } = useSelector((state) => state.Cart);
     const cartItemCount = cartItems?.length;
@@ -67,9 +68,10 @@ const Header = () => {
     };
 
     const handleLogout = () => {
-        dispatch(logoutUser());
-        dispatch(addSnackbarData({ message: 'Logged out successfully', variant: 'success' }));
         router.push('/login');
+        dispatch(logoutUser());
+        dispatch(resetCheckoutState());
+        dispatch(addSnackbarData({ message: 'Logged out successfully', variant: 'success' }));
     };
 
     const links = [
