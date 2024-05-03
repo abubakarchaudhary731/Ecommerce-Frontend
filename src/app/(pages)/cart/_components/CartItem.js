@@ -80,8 +80,8 @@ const CartItem = ({
                                         <br />
                                         <div className='tw-text-sm tw-flex tw-justify-between tw-items-center tw-flex-wrap'>
                                             <div className='tw-flex tw-gap-2 tw-text-icon'>
-                                                <p>${item.product.price}</p>
-                                                <p><b>X</b> {quantities[item.id]} = ${item.product.price * (quantities[item.id] || 1)} </p>
+                                                <p>{item.product.price}</p>
+                                                <p><b>X</b> {quantities[item.id]} = {item.product.price * (quantities[item.id] || 1)} </p>
                                             </div>
                                             {/* Quantity buttons */}
                                             <QuantityButtons

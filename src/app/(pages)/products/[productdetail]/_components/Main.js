@@ -80,9 +80,9 @@ const Main = () => {
                     </div>
                     <p className="tw-mb-5">{singleProduct.description}</p>
                     <div className="tw-flex tw-gap-5">
-                        <div className="tw-text-lg getProducts tw-mb-0">Price: ${discountedPrice(singleProduct)} </div>
+                        <div className="tw-text-lg getProducts tw-mb-0">Price: Rs. {discountedPrice(singleProduct)} </div>
                         {singleProduct?.discount && singleProduct.discount.is_active === 1 && (
-                            <div className="tw-text-lg getProducts tw-mb-0 tw-text-primary"><del>${singleProduct?.price}</del></div>
+                            <div className="tw-text-lg getProducts tw-mb-0 tw-text-primary"><del>Rs. {singleProduct?.price}</del></div>
                         )}
                     </div>
                     <div className="tw-text-base tw-font-medium tw-text-black/[.5]">
@@ -95,7 +95,7 @@ const Main = () => {
                     <div className="tw-mt-5 tw-flex tw-justify-between">
                         <div className="tw-text-base"><b>In Stock:</b> <i className="tw-font-medium tw-text-black/[.5]"> {singleProduct.stock}pc </i></div>
                         <RatingStar
-                            value={singleProduct.rating}
+                            value={singleProduct?.rating}
                             readOnly
                         />
                     </div>

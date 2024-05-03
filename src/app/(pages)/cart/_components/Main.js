@@ -160,14 +160,14 @@ const Main = () => {
                                             checkedItems.includes(item.id) && (
                                                 <div className='tw-flex tw-justify-between' key={index}>
                                                     <p className='tw-text-icon tw-font-bold'>{item.product.name}</p>
-                                                    <p>${(item.product.price * (quantities[item.id] || 1)).toFixed(2)}</p>
+                                                    <p>{(item.product.price * (quantities[item.id] || 1)).toFixed(2)}</p>
                                                 </div>
                                             )
                                         ))}
                                         <hr className='tw-border-icon' />
                                         <div className='tw-flex tw-justify-between'>
                                             <p className='tw-text-icon tw-font-bold'> Total: </p>
-                                            <p>${checkedItemsTotal.toFixed(2)}</p>
+                                            <p>{checkedItemsTotal.toFixed(2)} <small>PKR</small></p>
                                         </div>
                                         <hr className='tw-border-icon' />
                                     </div>
@@ -182,10 +182,9 @@ const Main = () => {
                                 handleClick={() => router.push('/products')}
                             />
                             <AbButton
-                                label={`Proceed to Checkout (${checkedItems.length})`}
-                                className='tw-px-4 tw-max-w-60'
+                                label={`Proceed to Checkout(${checkedItems.length})`}
+                                className='tw-max-w-64'
                                 handleClick={handleCheckout}
-                            // disabled={!checkedItems.length}
                             />
                         </div>
                         {/* Alert dialog for deletion confirmation */}

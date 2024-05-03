@@ -171,7 +171,7 @@ console.log(getId);
                     return (
                       <div className='tw-flex tw-justify-between tw-items-center tw-mb-3' key={index}>
                         <p> {item.quantity} X {item.product.name} </p>
-                        <p>${item.quantity * item.product.price}</p>
+                        <p>{item.quantity * item.product.price}</p>
                       </div>
                     )
                   })
@@ -179,16 +179,16 @@ console.log(getId);
                 <hr className='tw-border-icon' />
                 <div className='tw-flex tw-justify-between tw-items-center'>
                   <p className='tw-text-icon tw-font-bold tw-py-3'> Sub Total: </p>
-                  <p>${CheckoutData.total}</p>
+                  <p>{CheckoutData.total}</p>
                 </div>
                 <div className='tw-flex tw-justify-between tw-items-center'>
                   <p className='tw-text-icon tw-font-bold tw-mb-3'> Delivery: </p>
-                  <p>$5</p>
+                  <p>90</p>
                 </div>
                 <hr className='tw-border-icon' />
                 <div className='tw-flex tw-justify-between tw-items-center'>
                   <p className='tw-text-icon tw-font-bold tw-py-3'> Total: </p>
-                  <p>${CheckoutData.total + 5}</p>
+                  <p>{CheckoutData.total + 90} PKR </p>
                 </div>
                 <hr className='tw-border-icon' />
 

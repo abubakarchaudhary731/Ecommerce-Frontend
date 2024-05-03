@@ -4,12 +4,15 @@ import { usePathname, useRouter } from 'next/navigation';
 import { CardTick, Heart, Location, Personalcard, TruckTick } from 'iconsax-react';
 import { useDispatch, useSelector } from 'react-redux';
 import { getAddress } from '@/reduxtoolkit/slices/auth/AddressSlice';
+import { getCardDetail } from '@/reduxtoolkit/slices/auth/PaymentDetailSlice';
 
 const DashboardLayout = ({ children, counts }) => {
     const dispatch = useDispatch();
     const { userAddresses } = useSelector((state) => state.UserAddress);
+    const { userCards } = useSelector((state) => state.PaymentDetail);
     useEffect(() => {
         dispatch(getAddress());
+        dispatch(getCardDetail());
     }, [dispatch, counts]);
 
     return (
@@ -21,7 +24,7 @@ const DashboardLayout = ({ children, counts }) => {
                 <h1 className='tw-pt-6 tw-text-icon tw-text-lg tw-font-bold tw-px-5'> Account Settings </h1>
                 {renderNavItem(Personalcard, 'Profile', counts?.profile)}
                 {renderNavItem(Location, 'Addresses', userAddresses?.length)}
-                {renderNavItem(CardTick, 'Payment-Methods', 2)}
+                {renderNavItem(CardTick, 'Payment-Methods', userCards?.length)}
             </div>
             <div className='tw-basis-full md:tw-pl-10 tw-mt-5 md:tw-mt-0'>
                 {children}
