@@ -7,6 +7,7 @@ import SnakMessageSlice from './slices/SnakMessageSlice';
 import ProductSlice from './slices/products/ProductSlice';
 import CartSlice from './slices/cart/CartSlice';
 import CheckoutSlice from './slices/cart/CheckoutSlice';
+import AddressSlice from './slices/auth/AddressSlice';
 
 const persistConfig = {
   key: 'root',
@@ -21,6 +22,7 @@ const reducer = combineReducers({
   Products: ProductSlice,
   Cart: CartSlice,
   Checkout: CheckoutSlice,
+  UserAddress: AddressSlice,
 });
 
 const persistedReducer = persistReducer(persistConfig, reducer);

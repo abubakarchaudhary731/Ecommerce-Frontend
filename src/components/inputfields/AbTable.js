@@ -45,7 +45,7 @@ const AbTable = ({ data, columns, icon, clickOnIcon }) => {
                                 </td>
                             ))}
                             {icon && (
-                                <td className='tw-cursor-pointer' onClick={clickOnIcon}> {icon} </td>
+                                <td className='tw-cursor-pointer' onClick={()=> clickOnIcon(row.id)}> {icon} </td>
                             )}
                         </tr>
                     ))}

@@ -1,18 +1,21 @@
 'use client'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import AbRadioField from '@/components/inputfields/AbRadioField';
 import AddressForm from '@/components/shared/forms/AddressForm'
 import PaymentForm from '@/components/shared/forms/PaymentForm';
 import AbButton from '@/components/inputfields/AbButton';
 import { useRouter } from 'next/navigation';
 import { useDispatch, useSelector } from 'react-redux';
-import { addressStore } from '@/reduxtoolkit/slices/auth/AddressSlice';
+import { addressStore, getAddress } from '@/reduxtoolkit/slices/auth/AddressSlice';
 import { addSnackbarData } from '@/reduxtoolkit/slices/SnakMessageSlice';
-import { proceedToCheckout } from '@/reduxtoolkit/slices/cart/CheckoutSlice';
 
 const Main = () => {
   const [errors, setErrors] = useState({});
-  const [addressId, setAddressId] = useState()
+  const [getId, setGetId] = useState({
+    address_id: '',
+    payment_id: '',
+    payment_method: 'cod',
+  });
   const [address, setAddress] = useState({
     country: '',
     state: '',
@@ -27,10 +30,26 @@ const Main = () => {
     cvc: '',
     expiryDate: '',
   });
-
+console.log(getId);
   const router = useRouter();
   const dispatch = useDispatch();
   const { CheckoutData } = useSelector((state) => state.Checkout);
+  const { userAddresses } = useSelector((state) => state.UserAddress);
+
+  const handleIdChange = (e) => {
+    const { name, value } = e.target;
+    setGetId(prevId => ({
+      ...prevId,
+      [name]: value
+    }));
+  };
+
+  // ****************** Get User Addresses ****************** //
+  useEffect(() => {
+    if (CheckoutData?.products) {
+      dispatch(getAddress());
+    }
+  }, [dispatch, CheckoutData]);
 
   // ****************** User Address Form ****************** //
   const validateAddressForm = () => {
@@ -38,9 +57,10 @@ const Main = () => {
     if (!address.country) errors.country = 'Country is required';
     if (!address.state) errors.state = 'State is required'
     if (!address.city) errors.city = 'City is required'
-    if (!address.area) errors.area = 'Area is required'
+    if (!address.area) errors.area = 'Address is required'
     if (!address.postal_code) errors.postal_code = 'Postal Code is required'
     if (!address.phone) errors.phone = 'Phone No is required'
+    if (address.phone.length > 11 || address.phone.length < 11) errors.phone = 'Enter a valid phone number'
     setErrors(errors);
     return Object.keys(errors).length === 0;
   };
@@ -57,7 +77,7 @@ const Main = () => {
     if (validateAddressForm()) {
       dispatch(addressStore(address)).then((result) => {
         if (result.payload?.data) {
-          dispatch(proceedToCheckout({}))
+          dispatch(getAddress());
           dispatch(addSnackbarData({ message: 'Address added successfully', variant: 'success' }));
           setAddress({
             country: '', state: '', city: '', area: '', postal_code: '', phone: '',
@@ -94,10 +114,10 @@ const Main = () => {
                 <div>
                   <AbRadioField
                     label="Select an Address:"
-                    options={CheckoutData?.userAddress}
-                    defaultValue={addressId}
-                    name="gender"
-                    onChange={(e) => setAddressId(e.target.value)}
+                    options={userAddresses}
+                    defaultValue={getId.address_id}
+                    name="address_id"
+                    onChange={handleIdChange}
                   />
                 </div>
                 <div className='tw-mt-4'>
@@ -112,32 +132,36 @@ const Main = () => {
                 <div className='tw-mt-8'>
                   <AbRadioField
                     label="Select Payment Method:"
+                    defaultValue={getId.payment_method}
+                    name="payment_method"
+                    onChange={handleIdChange}
                     options={[
                       { id: 'cod', label: 'Cash On Delivery' },
                       { id: 'card', label: 'Debit Card' },
                     ]}
-                    // defaultValue={selectedValue}
-                    name="gender"
-                  // onChange={handleChange}
                   />
                 </div>
-                <div className='tw-mt-5'>
-                  <AbRadioField
-                    label="Select Card:"
-                    options={CheckoutData?.userCardDetails}
-                    // defaultValue={selectedValue}
-                    name="gender"
-                  // onChange={handleChange}
-                  />
-                  <div className='tw-my-2'>
-                    <PaymentForm
-                      title='Add Card'
-                      data={paymentDetail}
-                      handleChange={handlePaymentChange}
-                      handleSubmit={handlePaymentSubmit}
-                    />
-                  </div>
-                </div>
+                {
+                  getId.payment_method === 'card' && (
+                    <div className='tw-mt-5'>
+                      <AbRadioField
+                        label="Select Card:"
+                        options={[]}
+                        defaultValue={getId.payment_id}
+                        name="gender"
+                        onChange={handleIdChange}
+                      />
+                      <div className='tw-my-2'>
+                        <PaymentForm
+                          title='Add Card'
+                          data={paymentDetail}
+                          handleChange={handlePaymentChange}
+                          handleSubmit={handlePaymentSubmit}
+                        />
+                      </div>
+                    </div>
+                  )
+                }
               </div>
               {/*************** Right Section  **************/}
               <div className='tw-basis-96 tw-min-h-[70vh] tw-bg-whitee tw-rounded-xl tw-px-5 tw-py-8'>

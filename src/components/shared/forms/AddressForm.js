@@ -85,7 +85,7 @@ const AddressForm = ({
                         <div className='lg:tw-w-64'>
                             <AbInputField
                                 label='Phone Number'
-                                type='text'
+                                type='number'
                                 name='phone'
                                 value={data.phone}
                                 error={errors.phone}
