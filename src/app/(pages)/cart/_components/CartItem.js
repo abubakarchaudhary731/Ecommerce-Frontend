@@ -23,7 +23,7 @@ const CartItem = ({
     const toggleTableBody = () => {
         setShowTableBody(!showTableBody);
     };
-
+console.log(cartItems);
     return (
         <div>
             <table className='tw-w-full'>
@@ -59,6 +59,7 @@ const CartItem = ({
                                         checked={Array.from(checkedItems).includes(item.id)}
                                         onChange={handleBodyCheckboxChange}
                                         value={item.id}
+                                        disabled={item.product.stock < item.quantity}
                                     />
                                 </td>
                                 <td className='tw-w-full tw-bg-whitee tw-rounded-xl sm:tw-flex tw-items-center tw-mb-3 tw-shadow-sm'>
@@ -74,7 +75,10 @@ const CartItem = ({
                                     </div>
                                     <div className='tw-basis-full tw-pl-2 tw-pr-2 sm:tw-pr-10 tw-my-3 sm:tw-my-0'>
                                         <div className='tw-flex tw-justify-between tw-items-center tw-text-lg'>
-                                            <h1 className='tw-font-bold'> {item.product.name} </h1>
+                                            <h1 className='tw-font-bold'> 
+                                                {item.product.name} 
+                                                {item.product.stock < item.quantity && <i className='tw-text-whitee tw-px-2 tw-rounded-full tw-ml-4 tw-text-sm tw-bg-red-600'>out of stock</i>}
+                                            </h1>
                                             <ClearIcon className='tw-cursor-pointer tw-text-icon' onClick={() => handleClickAlertOpen(item.id)} />
                                         </div>
                                         <br />

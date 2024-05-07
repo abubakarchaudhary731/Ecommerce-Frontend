@@ -46,9 +46,8 @@ const ProductCard = ({ item }) => {
     const productAddToCart = (id) => {
         if (token) {
             dispatch(addToCart({ product_id: id })).then((result) => {
-                console.log(result);
-                if (result?.payload?.id || result?.payload?.cart) {
-                    dispatch(addSnackbarData({ message: 'Added To Cart', variant: 'success' }));
+                if (result?.payload?.message) {
+                    dispatch(addSnackbarData({ message: result?.payload?.message, variant: 'success' }));
                 } else {
                     dispatch(addSnackbarData({ message: "The product is out of stock", variant: 'error' }));
                 }

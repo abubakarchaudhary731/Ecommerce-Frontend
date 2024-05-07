@@ -16,8 +16,8 @@ const Main = () => {
     const { token } = useSelector((state) => state.LoginUser);
     const [openAlert, setOpenAlert] = useState(false);
     const [deleteId, setDeleteId] = useState(null);
-    const [selectAll, setSelectAll] = useState(false);
-    const [checkedItems, setCheckedItems] = useState(cartItems?.map(item => item.id));
+    const initialCheckedItems = cartItems.filter((item) => item.product.stock >= item.quantity).map((item) => item.id);
+    const [checkedItems, setCheckedItems] = useState(initialCheckedItems);
     const [quantities, setQuantities] = useState({});
 
     useEffect(() => {
@@ -41,10 +41,11 @@ const Main = () => {
             [itemId]: (prevQuantities[itemId] || 1) + 1,
         }));
         dispatch(updateCartItem({ id: itemId, quantity: quantities[itemId] + 1 })).then((result) => {
-            if (!result?.payload?.message) {
-                dispatch(addSnackbarData({ message: "Something went wrong", variant: 'error' }));
+            if (result?.payload?.message) {
                 dispatch(getCartItems());
+                dispatch(addSnackbarData({ message: result?.payload?.message, variant: 'success' }));
             } else {
+                dispatch(addSnackbarData({ message: "Something went wrong", variant: 'error' }));
                 dispatch(getCartItems());
             }
         });
@@ -57,10 +58,11 @@ const Main = () => {
                 [itemId]: prevQuantities[itemId] - 1,
             }));
             dispatch(updateCartItem({ id: itemId, quantity: quantities[itemId] - 1 })).then((result) => {
-                if (!result?.payload?.message) {
-                    dispatch(addSnackbarData({ message: "Something went wrong", variant: 'error' }));
+                if (result?.payload?.message) {
                     dispatch(getCartItems());
+                    dispatch(addSnackbarData({ message: result?.payload?.message, variant: 'success' }));
                 } else {
+                    dispatch(addSnackbarData({ message: "Something went wrong", variant: 'error' }));
                     dispatch(getCartItems());
                 }
             });
@@ -93,9 +95,12 @@ const Main = () => {
 
     // **************** Handle Header Checkbox Change ******************** //
     const handleHeaderCheckboxChange = (event) => {
-        setSelectAll(!selectAll);
-        setCheckedItems(selectAll ? [] : cartItems.map((item) => item.id));
-    };
+        const { checked } = event.target;
+        const newCheckedItems = checked
+            ? cartItems.filter((item) => item.product.stock >= item.quantity).map((item) => item.id)
+            : [];
+        setCheckedItems(newCheckedItems);
+    };    
 
     const handleBodyCheckboxChange = (e) => {
         const itemId = parseInt(e.target.value);
