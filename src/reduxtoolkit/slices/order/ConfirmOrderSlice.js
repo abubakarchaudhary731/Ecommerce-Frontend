@@ -11,7 +11,6 @@ let initialState = {
 
 // ****************** Place Order  ********************* //
 export const placeOrder = createAsyncThunk('placeOrder', async (data) => {
-  console.log(data);
   const token = store.getState().LoginUser.token
   try {
     const response = await axios.post(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/v1/order/store`, data, {
@@ -31,7 +30,7 @@ export const placeOrder = createAsyncThunk('placeOrder', async (data) => {
 export const orderHistory = createAsyncThunk('orderHistory', async () => {
   const token = store.getState().LoginUser.token
   try {
-    const response = await axios.get(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/v1/store`, {
+    const response = await axios.get(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/v1/order/history`, {
       headers: {
         "Authorization": `Bearer ${token}`,
       },
@@ -70,7 +69,7 @@ const ConfirmOrderSlice = createSlice({
       })
       .addCase(orderHistory.fulfilled, (state, action) => {
         state.loading = false;
-        state.orders = action.payload;
+        state.orders = action.payload.orderHistory;
       })
       .addCase(orderHistory.rejected, (state, action) => {
         state.loading = false;

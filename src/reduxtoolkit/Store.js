@@ -9,6 +9,7 @@ import CartSlice from './slices/cart/CartSlice';
 import CheckoutSlice from './slices/cart/CheckoutSlice';
 import AddressSlice from './slices/auth/AddressSlice';
 import PaymentDetailSlice from './slices/auth/PaymentDetailSlice';
+import ConfirmOrderSlice from './slices/order/ConfirmOrderSlice';
 
 const persistConfig = {
   key: 'root',
@@ -25,6 +26,7 @@ const reducer = combineReducers({
   Checkout: CheckoutSlice,
   UserAddress: AddressSlice,
   PaymentDetail: PaymentDetailSlice,
+  Orders: ConfirmOrderSlice,
 });
 
 const persistedReducer = persistReducer(persistConfig, reducer);

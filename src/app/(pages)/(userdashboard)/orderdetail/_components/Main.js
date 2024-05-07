@@ -1,8 +1,13 @@
-import { ShoppingBag } from 'iconsax-react'
-import Image from 'next/image'
+'use client';
 import React from 'react'
+import Image from 'next/image'
+import { ShoppingBag } from 'iconsax-react'
+import { useDispatch, useSelector } from 'react-redux'
 
 const Main = () => {
+    const dispatch = useDispatch();
+    const { orders } = useSelector((state) => state.Orders);
+    console.log(orders);
     return (
         <>
             <div className='tw-flex tw-gap-2 tw-items-center'>
@@ -11,14 +16,14 @@ const Main = () => {
             </div>
             <div className='tw-mt-5 tw-bg-whitee tw-rounded-xl'>
                 <div className='tw-py-5 tw-px-6 tw-flex tw-gap-3 tw-flex-wrap'>
-                    <p><b className='tw-text-icon'>Order ID:</b> 1234567 </p>
+                    <p><b className='tw-text-icon'>Order ID:</b> {orders.order_number} </p>
                     <p><b className='tw-text-icon'>Placed On:</b> 03jan2021 </p>
                     <p><b className='tw-text-icon'>Delivered on:</b> 03jan2025 </p>
                 </div>
                 <hr className='tw-border-icon' />
                 <div className='tw-p-6'>
                     {
-                        [1, 2, 3].map((item, index) => {
+                        (orders.order_items)?.map((item, index) => {
                             return (
                                 <div className='tw-flex tw-justify-between tw-items-center tw-mt-2' key={index}>
                                     <div className='tw-flex tw-gap-2 tw-items-center'>
