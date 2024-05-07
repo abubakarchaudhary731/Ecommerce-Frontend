@@ -8,6 +8,8 @@ import { useRouter } from 'next/navigation';
 import { useDispatch, useSelector } from 'react-redux';
 import { addressStore, getAddress } from '@/reduxtoolkit/slices/auth/AddressSlice';
 import { addSnackbarData } from '@/reduxtoolkit/slices/SnakMessageSlice';
+import { cardStore, getCardDetail } from '@/reduxtoolkit/slices/auth/PaymentDetailSlice';
+import { placeOrder } from '@/reduxtoolkit/slices/order/ConfirmOrderSlice';
 
 const Main = () => {
   const [errors, setErrors] = useState({});
@@ -15,6 +17,8 @@ const Main = () => {
     address_id: '',
     payment_id: '',
     payment_method: 'cod',
+    cartIds: [],
+    total_price: '',
   });
   const [address, setAddress] = useState({
     country: '',
@@ -25,12 +29,12 @@ const Main = () => {
     phone: '',
   });
   const [paymentDetail, setPaymentDetail] = useState({
-    nameOnCard: '',
-    cardNumber: '',
+    name_on_card: '',
+    card_number: '',
     cvc: '',
-    expiryDate: '',
+    expiry_date: '',
   });
-console.log(getId);
+
   const router = useRouter();
   const dispatch = useDispatch();
   const { CheckoutData } = useSelector((state) => state.Checkout);
@@ -43,6 +47,15 @@ console.log(getId);
       [name]: value
     }));
   };
+
+  useEffect(() => {
+    const cartIds = CheckoutData?.products?.map(item => item.id) || [];
+    setGetId(prevState => ({
+      ...prevState,
+      cartIds: cartIds,
+      total_price: CheckoutData?.total + 90
+    }));
+  }, [CheckoutData]);
 
   // ****************** Get User Addresses ****************** //
   useEffect(() => {
@@ -89,19 +102,97 @@ console.log(getId);
     }
   }
 
+  // ****************** Get User Payment Cards ****************** //
+  const { userCards } = useSelector((state) => state.PaymentDetail)
+  useEffect(() => {
+    if (CheckoutData?.products) {
+      dispatch(getCardDetail());
+    }
+  }, [dispatch, CheckoutData]);
+
   // ****************** User Payment Form ****************** //
   const handlePaymentChange = (e) => {
     const { name, value } = e.target;
+    let formattedValue = value;
+
+    if (name === 'expiry_date') {
+      // Format expiry date (MM-YY) with hyphen after every 2 digits
+      formattedValue = value.replace(/\D/g, ''); // Remove non-numeric characters
+      if (formattedValue.length > 2) {
+        formattedValue = formattedValue.slice(0, 2) + '-' + formattedValue.slice(2);
+      }
+
+      // Validate format (4 characters with a hyphen)
+      if (!/^\d{0,2}-?\d{0,2}$/.test(formattedValue)) {
+        formattedValue = ''; // Set to empty string if format is invalid
+      }
+
+      // Check if the month part is greater than 12
+      const [month] = formattedValue.split('-');
+      if (parseInt(month, 10) > 12) {
+        formattedValue = formattedValue.slice(0, -1); // Remove the last character
+      }
+    } else if (name === 'card_number') {
+      // Format card number with hyphen after every 4 digits
+      formattedValue = value.replace(/\D/g, ''); // Remove non-numeric characters
+      if (formattedValue.length > 0) {
+        formattedValue = formattedValue.match(new RegExp('.{1,4}', 'g')).join('-');
+      }
+
+      // Allow only 16 digits
+      if (formattedValue.length > 19) { // 16 digits + 3 hyphens
+        return;
+      }
+    }
+
     setPaymentDetail(prevData => ({
       ...prevData,
-      [name]: value
+      [name]: formattedValue
     }));
   };
+  const validatePaymentForm = () => {
+    const errors = {};
+    if (!paymentDetail.name_on_card) errors.name_on_card = 'Name On Card is required';
+    if (!paymentDetail.card_number) errors.card_number = 'Card Number is required'
+    if (!paymentDetail.cvc) errors.cvc = 'CVC is required'
+    if (!paymentDetail.expiry_date) errors.expiry_date = 'Expiry Date is required'
+    setErrors(errors);
+    return Object.keys(errors).length === 0;
+  };
 
+  // ****************** User Payment Form Submit ****************** //
   const handlePaymentSubmit = (e) => {
-    e.preventDefault()
-    console.log(paymentDetail);
+    e.preventDefault();
+    if (validatePaymentForm()) {
+      dispatch(cardStore(paymentDetail)).then((result) => {
+        if (result?.payload?.message) {
+          dispatch(getCardDetail());
+          dispatch(addSnackbarData({ message: result?.payload?.message, variant: 'success' }));
+          setPaymentDetail({ name_on_card: '', card_number: '', cvc: '', expiry_date: '' });
+        } else {
+          dispatch(addSnackbarData({ message: result?.error?.message, variant: 'error' }));
+        }
+      })
+    }
   }
+
+  // ********************** Handle Confirm Order ********************** //
+  const confirmOrder = () => {
+    if (!getId.address_id) {
+      dispatch(addSnackbarData({ message: 'Please select an address', variant: 'error' }));
+    } else if (getId.payment_method === 'card' && !getId.payment_id) {
+      dispatch(addSnackbarData({ message: 'Please select a payment method', variant: 'error' }));
+    } else {
+      dispatch(placeOrder(getId)).then((result) => {
+        if (result?.payload?.message) {
+          dispatch(addSnackbarData({ message: result?.payload?.message, variant: 'success' }));
+          router.push('/orders');
+        } else {
+          dispatch(addSnackbarData({ message: result?.error?.message, variant: 'error' }));
+        }
+      });
+    }
+  };
 
   return (
     <>
@@ -146,9 +237,9 @@ console.log(getId);
                     <div className='tw-mt-5'>
                       <AbRadioField
                         label="Select Card:"
-                        options={[]}
+                        options={userCards}
                         defaultValue={getId.payment_id}
-                        name="gender"
+                        name="payment_id"
                         onChange={handleIdChange}
                       />
                       <div className='tw-my-2'>
@@ -157,6 +248,7 @@ console.log(getId);
                           data={paymentDetail}
                           handleChange={handlePaymentChange}
                           handleSubmit={handlePaymentSubmit}
+                          errors={errors}
                         />
                       </div>
                     </div>
@@ -179,7 +271,7 @@ console.log(getId);
                 <hr className='tw-border-icon' />
                 <div className='tw-flex tw-justify-between tw-items-center'>
                   <p className='tw-text-icon tw-font-bold tw-py-3'> Sub Total: </p>
-                  <p>{CheckoutData.total}</p>
+                  <p>Rs: {CheckoutData.total}</p>
                 </div>
                 <div className='tw-flex tw-justify-between tw-items-center'>
                   <p className='tw-text-icon tw-font-bold tw-mb-3'> Delivery: </p>
@@ -206,9 +298,8 @@ console.log(getId);
               />
               <AbButton
                 label='Confirm Order'
-                // contained={true}
                 className='tw-max-w-40'
-                handleClick={() => router.push('/cart')}
+                handleClick={confirmOrder}
               />
             </div>
           </div>

@@ -94,7 +94,6 @@ const Main = () => {
           dispatch(addSnackbarData({ message: result?.error?.message, variant: 'error' }));
         }
       })
-
     }
   }
 
