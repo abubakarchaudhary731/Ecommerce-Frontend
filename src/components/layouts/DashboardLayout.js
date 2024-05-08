@@ -36,11 +36,12 @@ const DashboardLayout = ({ children, counts }) => {
 const renderNavItem = (Icon, label, count) => {
     const router = useRouter();
     const pathName = usePathname();
+    const param = pathName.split('/').pop();
     let isActive = pathName === '/' + label.toLowerCase();
 
-    if ((pathName === '/orders' || pathName === '/orderdetail') && label.toLowerCase() === 'orders') {
+    if ((pathName === '/orders' || pathName === `/orders/${param}`) && label.toLowerCase() === 'orders') {
         isActive = true;
-    } else if (pathName === '/orders' || pathName === '/orderdetail') {
+    } else if (pathName === '/orders' || pathName === `/orders/${param}`) {
         isActive = false;
     }
 

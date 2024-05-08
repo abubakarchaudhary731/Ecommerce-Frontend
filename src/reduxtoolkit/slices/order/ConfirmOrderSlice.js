@@ -4,6 +4,7 @@ import axios from 'axios';
 
 let initialState = {
   orders: [],
+  orderDetail: {},
   loading: false,
   errors: null,
   message: null,
@@ -31,6 +32,21 @@ export const orderHistory = createAsyncThunk('orderHistory', async () => {
   const token = store.getState().LoginUser.token
   try {
     const response = await axios.get(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/v1/order/history`, {
+      headers: {
+        "Authorization": `Bearer ${token}`,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    return error;
+  }
+});
+
+// ****************** Get Single Order History Detail********************* //
+export const orderHistoryDetail = createAsyncThunk('orderHistoryDetail', async (id) => {
+  const token = store.getState().LoginUser.token
+  try {
+    const response = await axios.get(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/v1/order/details/${id}`, {
       headers: {
         "Authorization": `Bearer ${token}`,
       },
@@ -72,6 +88,20 @@ const ConfirmOrderSlice = createSlice({
         state.orders = action.payload.orderHistory;
       })
       .addCase(orderHistory.rejected, (state, action) => {
+        state.loading = false;
+        state.errors = action.payload;
+      })
+
+      // ****************** Get Order History Detail ********************* //
+      .addCase(orderHistoryDetail.pending, (state) => {
+        state.loading = true;
+        state.errors = null;
+      })
+      .addCase(orderHistoryDetail.fulfilled, (state, action) => {
+        state.loading = false;
+        state.orderDetail = action.payload.orderDetails;
+      })
+      .addCase(orderHistoryDetail.rejected, (state, action) => {
         state.loading = false;
         state.errors = action.payload;
       })

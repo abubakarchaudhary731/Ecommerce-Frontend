@@ -20,7 +20,8 @@ const Header = () => {
     const dispatch = useDispatch();
     const pathName = usePathname();
     // Protected Routes
-    const protectedRoutes = ['/cart', '/checkout', '/profile', '/orders', '/orderdetail', '/wishlist', '/addresses', '/payment-methods'];
+    const param = pathName.split('/').pop();
+    const protectedRoutes = ['/cart', '/checkout', '/profile', '/orders', `/orders/${param}`, '/wishlist', '/addresses', '/payment-methods'];
     const { token } = useSelector((state) => state.LoginUser);
     const { cartItems } = useSelector((state) => state.Cart);
     const cartItemCount = cartItems?.length;
@@ -101,7 +102,7 @@ const Header = () => {
                             ))}
                             <div className="tw-ml-8 tw-flex tw-items-center tw-space-x-4">
                                 <SearchNormal1 className={isActive('/search') ? css.active : 'tw-cursor-pointer'} onClick={toggleSearch} />
-                                <User className={isActive(['/profile', '/orders', '/wishlist', '/addresses', '/payment-methods', '/orderdetail']) ? css.active : 'tw-cursor-pointer'} onClick={() => router.push('/profile')} />
+                                <User className={isActive(['/profile', '/orders', '/wishlist', '/addresses', '/payment-methods', `/orders/${param}`]) ? css.active : 'tw-cursor-pointer'} onClick={() => router.push('/profile')} />
                                 <div className="tw-relative tw-cursor-pointer" onClick={() => router.push('/cart')}>
                                     <ShoppingCart className={isActive('/cart') ? css.active : ''} />
                                     {

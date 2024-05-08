@@ -177,13 +177,14 @@ const Main = () => {
   }
 
   // ********************** Handle Confirm Order ********************** //
-  const confirmOrder = () => {
+  const confirmOrder = () => {total
     if (!getId.address_id) {
       dispatch(addSnackbarData({ message: 'Please select an address', variant: 'error' }));
     } else if (getId.payment_method === 'card' && !getId.payment_id) {
       dispatch(addSnackbarData({ message: 'Please select a payment method', variant: 'error' }));
     } else {
       dispatch(placeOrder(getId)).then((result) => {
+        console.log(result);
         if (result?.payload?.message) {
           dispatch(addSnackbarData({ message: result?.payload?.message, variant: 'success' }));
           router.push('/orders');

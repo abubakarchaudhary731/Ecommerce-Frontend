@@ -11,7 +11,7 @@ const Main = () => {
   const router = useRouter();
   const { orders } = useSelector((state) => state.Orders);
   const { token } = useSelector((state) => state.LoginUser);
-console.log(orders);
+
   // ***************** Render Data Using UseEffect ************************ //
   useEffect(() => {
     if (token) {
@@ -28,9 +28,10 @@ console.log(orders);
     { key: 'created_at', label: 'Date Purchased' },
   ];
 
-  const handleIconClick = () => {
-    router.push('/orderdetail');
+  const handleIconClick = (id) => {
+    router.push(`/orders/${id}`);
   };
+
   return (
     <>
       <div className='tw-flex tw-gap-2 tw-items-center'>
