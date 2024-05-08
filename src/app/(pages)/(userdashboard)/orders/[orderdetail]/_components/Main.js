@@ -18,7 +18,7 @@ const Main = () => {
         if (token) {
             dispatch(orderHistoryDetail(paramInt));
         }
-    }, [dispatch, token])
+    }, [dispatch, paramInt, token])
 
     // ******************* Make Expected Delivery Date ******************** //
     const getDeliveryDate = (dateString) => {

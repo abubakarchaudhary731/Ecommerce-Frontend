@@ -18,7 +18,7 @@ const Main = () => {
 
     useEffect(() => {
         dispatch(getSingleProduct(params.productdetail))
-    }, [dispatch]);
+    }, [dispatch, params.productdetail]);
 
     const { singleProduct } = useSelector((state) => state.Products);
     const { token } = useSelector((state) => state.LoginUser);

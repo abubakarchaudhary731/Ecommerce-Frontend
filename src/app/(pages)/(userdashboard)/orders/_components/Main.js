@@ -17,7 +17,7 @@ const Main = () => {
     if (token) {
       dispatch(orderHistory());
     }
-  }, [dispatch]);
+  }, [dispatch, token]);
 
   // ****************** Table Columns ******************** //
   const columns = [
