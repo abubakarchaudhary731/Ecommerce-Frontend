@@ -1,5 +1,5 @@
 'use client';
-import { useEffect, useState } from 'react';
+import { useEffect, useLayoutEffect, useState } from 'react';
 import Link from 'next/link';
 import { MdOutlineSegment } from 'react-icons/md';
 import { IoMdClose } from 'react-icons/io';
@@ -32,18 +32,18 @@ const Header = () => {
         }
     }, [token, dispatch]);
 
-    useEffect(() => {
+    useLayoutEffect(() => {
         if (!token && protectedRoutes.includes(pathName)) {
             dispatch(addSnackbarData({ message: 'Please login first', variant: 'error' }));
             redirect('/login');
         }
     }, [token, pathName]);
-    useEffect(() => {
+    useLayoutEffect(() => {
         if (token && ['/login', '/register'].includes(pathName)) {
             dispatch(addSnackbarData({ message: 'You are already logged in', variant: 'success' }));
             redirect('/');
         }
-    })
+    });
 
     const toggleSearch = () => {
         setIsMenuOpen(false);

@@ -74,8 +74,8 @@ const Main = () => {
                 <div className='sm:tw-basis-[50%] tw-bg-white tw-rounded-xl tw-p-6'>
                     <p className='tw-font-bold tw-text-icon tw-text-xl'>Shipping Address: </p>
                     <p className='tw-mt-4 tw-font-bold'> UserName </p>
-                    <p className='tw-text-sm'>{orderDetail.address.address}, {orderDetail.address.city}. </p>
-                    <p className='tw-text-sm'>{orderDetail.address.phone} </p>
+                    <p className='tw-text-sm'>{orderDetail.address?.address}, {orderDetail.address?.city}. </p>
+                    <p className='tw-text-sm'>{orderDetail.address?.phone} </p>
                 </div>
 
                 <div className='sm:tw-basis-[50%] tw-bg-white tw-rounded-xl tw-p-6 tw-mt-4 sm:tw-mt-0'>
