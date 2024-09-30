@@ -2,8 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import ClearIcon from '@mui/icons-material/Clear';
 import Checkbox from '@mui/material/Checkbox';
-import AbButton from '../../../../components/inputfields/AbButton';
-import AbAlertDialog from '../../../../components/inputfields/AbAlertDialog';
 import { ArrowDown2, ArrowUp2 } from 'iconsax-react';
 import QuantityButtons from '../../../../components/shared/QuantityButtons';
 
@@ -23,7 +21,7 @@ const CartItem = ({
     const toggleTableBody = () => {
         setShowTableBody(!showTableBody);
     };
-
+console.log(cartItems);
     return (
         <div>
             <table className='tw-w-full'>
@@ -59,6 +57,7 @@ const CartItem = ({
                                         checked={Array.from(checkedItems).includes(item.id)}
                                         onChange={handleBodyCheckboxChange}
                                         value={item.id}
+                                        disabled={item.product.stock < item.quantity}
                                     />
                                 </td>
                                 <td className='tw-w-full tw-bg-whitee tw-rounded-xl sm:tw-flex tw-items-center tw-mb-3 tw-shadow-sm'>
@@ -69,19 +68,22 @@ const CartItem = ({
                                             alt='Product Image'
                                             width={130}
                                             height={100}
-                                            className='tw-rounded-l-xl tw-w-32 tw-h-28 tw-object-cover'
+                                            className='tw-rounded-l-xl tw-w-full sm:tw-w-32 tw-h-28 tw-object-cover'
                                         />
                                     </div>
-                                    <div className='tw-basis-full tw-pl-2 tw-pr-2 sm:tw-pr-10'>
+                                    <div className='tw-basis-full tw-pl-2 tw-pr-2 sm:tw-pr-10 tw-my-3 sm:tw-my-0'>
                                         <div className='tw-flex tw-justify-between tw-items-center tw-text-lg'>
-                                            <h1 className='tw-font-bold'> {item.product.name} </h1>
-                                            <ClearIcon className='tw-cursor-pointer tw-text-icon' onClick={()=> handleClickAlertOpen(item.id)} />
+                                            <h1 className='tw-font-bold'> 
+                                                {item.product.name} 
+                                                {item.product.stock < item.quantity && <i className='tw-text-whitee tw-px-2 tw-rounded-full tw-ml-4 tw-text-sm tw-bg-red-600'>out of stock</i>}
+                                            </h1>
+                                            <ClearIcon className='tw-cursor-pointer tw-text-icon' onClick={() => handleClickAlertOpen(item.id)} />
                                         </div>
                                         <br />
                                         <div className='tw-text-sm tw-flex tw-justify-between tw-items-center tw-flex-wrap'>
                                             <div className='tw-flex tw-gap-2 tw-text-icon'>
-                                                <p>${item.product.price}</p>
-                                                <p><b>X</b> {quantities[item.id]} = ${item.product.price * (quantities[item.id] || 1)} </p>
+                                                <p>{item.product.price}</p>
+                                                <p><b>X</b> {quantities[item.id]} = {item.product.price * (quantities[item.id] || 1)} </p>
                                             </div>
                                             {/* Quantity buttons */}
                                             <QuantityButtons
@@ -97,21 +99,6 @@ const CartItem = ({
                     </tbody>
                 )}
             </table>
-            {/* Continue shopping button */}
-            <div className='tw-mt-10'>
-                <div className='tw-flex tw-justify-between'>
-                    <div></div>
-                    <div>
-                        <AbButton
-                            label='Continue Shopping'
-                            contained={true}
-                            className='tw-px-4'
-                            handleClick={() => router.push('/products')}
-                        />
-                    </div>
-                </div>
-            </div>
-
         </div>
     );
 };

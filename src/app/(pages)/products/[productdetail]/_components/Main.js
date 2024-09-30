@@ -4,12 +4,12 @@ import ProductDetailsCarousel from "./ProductDetailsCarousel";
 import RatingStar from "@/components/inputfields/RatingStar";
 import { Heart, ShoppingCart } from "iconsax-react";
 import { useDispatch, useSelector } from "react-redux";
-import './style.css';
 import { getSingleProduct } from "@/reduxtoolkit/slices/products/ProductSlice";
 import { useParams } from "next/navigation";
 import QuantityButtons from "@/components/shared/QuantityButtons";
 import { addToCart } from "@/reduxtoolkit/slices/cart/CartSlice";
 import { addSnackbarData } from "@/reduxtoolkit/slices/SnakMessageSlice";
+import './style.css';
 
 const Main = () => {
     const [quantity, setQuantity] = useState(1);
@@ -18,11 +18,12 @@ const Main = () => {
 
     useEffect(() => {
         dispatch(getSingleProduct(params.productdetail))
-    }, [dispatch]);
+    }, [dispatch, params.productdetail]);
 
     const { singleProduct } = useSelector((state) => state.Products);
     const { token } = useSelector((state) => state.LoginUser);
 
+    // *************** Handle Discounted Price **************** //
     const discountedPrice = (item) => {
         if (item.discount && item.discount.is_active === 1) {
             const discountAmount = (item.price * item.discount.percentage) / 100;
@@ -32,6 +33,7 @@ const Main = () => {
         }
     };
 
+    // *************** Handle Quantity Buttons **************** //
     const handleAddition = () => {
         setQuantity(quantity + 1);
     };
@@ -41,15 +43,20 @@ const Main = () => {
         }
     };
 
+    // *************** Handle Add To Cart **************** //
     const handleAddToCart = () => {
         if (token) {
-            dispatch(addToCart({ product_id: singleProduct?.id, quantity: quantity })).then((result) => {
-                if (result?.payload?.id || result?.payload?.cart) {
-                    dispatch(addSnackbarData({ message: 'Added To Cart', variant: 'success' }));
-                } else {
-                    dispatch(addSnackbarData({ message: "Something went wrong", variant: 'error' }));
-                }
-            });
+            if (quantity > singleProduct.stock) {
+                dispatch(addSnackbarData({ message: 'Product out of stock', variant: 'error' }));
+            } else {
+                dispatch(addToCart({ product_id: singleProduct?.id, quantity: quantity })).then((result) => {
+                    if (result?.payload?.message) {
+                        dispatch(addSnackbarData({ message: result?.payload?.message, variant: 'success' }));
+                    } else {
+                        dispatch(addSnackbarData({ message: "Something went wrong", variant: 'error' }));
+                    }
+                });
+            }
         } else {
             dispatch(addSnackbarData({ message: 'Please Login First', variant: 'error' }));
         }
@@ -80,9 +87,9 @@ const Main = () => {
                     </div>
                     <p className="tw-mb-5">{singleProduct.description}</p>
                     <div className="tw-flex tw-gap-5">
-                        <div className="tw-text-lg getProducts tw-mb-0">Price: ${discountedPrice(singleProduct)} </div>
+                        <div className="tw-text-lg getProducts tw-mb-0">Price: Rs. {discountedPrice(singleProduct)} </div>
                         {singleProduct?.discount && singleProduct.discount.is_active === 1 && (
-                            <div className="tw-text-lg getProducts tw-mb-0 tw-text-primary"><del>${singleProduct?.price}</del></div>
+                            <div className="tw-text-lg getProducts tw-mb-0 tw-text-primary"><del>Rs. {singleProduct?.price}</del></div>
                         )}
                     </div>
                     <div className="tw-text-base tw-font-medium tw-text-black/[.5]">
@@ -95,7 +102,7 @@ const Main = () => {
                     <div className="tw-mt-5 tw-flex tw-justify-between">
                         <div className="tw-text-base"><b>In Stock:</b> <i className="tw-font-medium tw-text-black/[.5]"> {singleProduct.stock}pc </i></div>
                         <RatingStar
-                            value={singleProduct.rating}
+                            value={singleProduct?.rating}
                             readOnly
                         />
                     </div>

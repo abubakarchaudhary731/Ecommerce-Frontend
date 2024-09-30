@@ -6,6 +6,7 @@ import Image from 'next/image';
 import AbTable from '@/components/inputfields/AbTable';
 import AbModal from '@/components/inputfields/AbModal';
 import AbInputField from '@/components/inputfields/AbInputField';
+import { useSelector } from 'react-redux';
 
 const Main = () => {
   const [openModal, setOpenModal] = useState(false);
@@ -13,17 +14,20 @@ const Main = () => {
   const handleOpen = () => setOpenModal(true);
   const handleClose = () => setOpenModal(false);
 
+  const { user } = useSelector((state) => state.LoginUser);
+
   const column = [
     { key: 'name', label: 'Name' },
     { key: 'email', label: 'Email' },
     { key: 'phone', label: 'Phone' },
-  ]
+  ];
+
   return (
     <>
       <div className='tw-flex tw-justify-between tw-items-center'>
         <div className='tw-flex tw-gap-2 tw-items-center'>
           <ProfileCircle className='tw-text-primary' />
-          <p className='tw-text-2xl tw-font-bold'> My Profile</p>
+          <p className='tw-text-2xl tw-font-bold'> My Profile </p>
         </div>
         <div>
           <AbButton type='button' label='Edit Profile' className='tw-px-3' handleClick={handleOpen} />
@@ -41,8 +45,8 @@ const Main = () => {
               className='tw-rounded-full '
             />
             <div>
-              <p className='tw-font-bold tw-text-lg'>Name</p>
-              <p className='tw-text-sm tw-text-icon'>Email</p>
+              <p className='tw-font-bold tw-text-lg'> {user?.name} </p>
+              <p className='tw-text-sm tw-text-icon'>{user?.email}</p>
             </div>
           </div>
         </div>
@@ -65,13 +69,16 @@ const Main = () => {
         </div>
       </div>
       {/* *************************** Table ************************* */}
-      <div className='tw-mt-5'>
-        <AbTable
-          data={[]}
-          columns={column}
-        />
-      </div>
-
+      {
+        user && (
+          <div className='tw-mt-5'>
+            <AbTable
+              data={[user]}
+              columns={column}
+            />
+          </div>
+        )
+      }
       <AbModal
         title='Edit Profile'
         open={openModal}

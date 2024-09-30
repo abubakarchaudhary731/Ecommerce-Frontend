@@ -46,10 +46,10 @@ const ProductCard = ({ item }) => {
     const productAddToCart = (id) => {
         if (token) {
             dispatch(addToCart({ product_id: id })).then((result) => {
-                if (result?.payload?.id || result?.payload?.cart) {
-                    dispatch(addSnackbarData({ message: 'Added To Cart', variant: 'success' }));
+                if (result?.payload?.message) {
+                    dispatch(addSnackbarData({ message: result?.payload?.message, variant: 'success' }));
                 } else {
-                    dispatch(addSnackbarData({ message: "Something went wrong", variant: 'error' }));
+                    dispatch(addSnackbarData({ message: "The product is out of stock", variant: 'error' }));
                 }
             });
         } else {
@@ -93,8 +93,8 @@ const ProductCard = ({ item }) => {
                     </IconButton>
                 </div>
                 <div>
-                    <b className='tw-text-primary tw-mr-3'>${discountedPrice(item)}</b>
-                    {item.discount && item.discount.is_active === 1 && <i><del>${item.price}</del></i>}
+                    <b className='tw-text-primary tw-mr-3'>Rs. {discountedPrice(item)}</b>
+                    {item.discount && item.discount.is_active === 1 && <i><del>Rs. {item.price}</del></i>}
                 </div>
                 <AbButton
                     type={"button"}

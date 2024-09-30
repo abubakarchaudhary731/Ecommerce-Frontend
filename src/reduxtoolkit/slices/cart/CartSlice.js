@@ -58,7 +58,6 @@ export const deleteCartItem = createAsyncThunk("deleteCartItem", async (id) => {
 
 // ****************** Update CART Item ********************* //
 export const updateCartItem = createAsyncThunk("updateCartItem", async (data) => {
-    console.log(data);
     const token = store.getState().LoginUser.token
     try {
         const response = await axios.post(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/v1/cart/update/${data.id}`, data, {

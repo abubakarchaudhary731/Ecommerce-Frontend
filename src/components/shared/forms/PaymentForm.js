@@ -9,6 +9,7 @@ const PaymentForm = ({
   handleChange,
   handleSubmit,
   defaultExpanded,
+  errors,
 }) => {
   return (
     <>
@@ -22,18 +23,25 @@ const PaymentForm = ({
               <AbInputField
                 label='Name on Card'
                 type='text'
-                name='nameOnCard'
-                value={data.nameOnCard}
+                name='name_on_card'
+                value={data.name_on_card}
                 onChange={handleChange}
+                error={errors ? errors.name_on_card : null}
               />
             </div>
             <div className='lg:tw-w-1/3'>
               <AbInputField
                 label='Card Number'
-                type='number'
-                name='cardNumber'
-                value={data.cardNumber}
+                type='text'
+                name='card_number'
+                value={data.card_number}
                 onChange={handleChange}
+                error={errors ? errors.card_number : null}
+                inputProps={{
+                  inputMode: 'numeric',
+                  pattern: '\\d{4}-\\d{4}-\\d{4}-\\d{4}',
+                  placeholder: '05-25',
+                }}
               />
             </div>
           </div>
@@ -45,20 +53,22 @@ const PaymentForm = ({
                 name='cvc'
                 value={data.cvc}
                 onChange={handleChange}
+                error={errors ? errors.cvc : null}
               />
             </div>
             <div className='lg:tw-w-1/3'>
               <AbInputField
-                // label='MM-YY'
-                type='date'
-                name='expiryDate'
-                value={data.expiryDate}
+                label='Expiry Date'
+                type='text'
+                name='expiry_date'
+                value={data.expiry_date}
                 onChange={handleChange}
-              //   inputProps={{
-              //     inputMode: 'numeric',
-              //     pattern: '\\d{2}-\\d{2}',
-              //     placeholder: 'mm-yy',
-              // }}
+                error={errors ? errors.expiry_date : null}
+                inputProps={{
+                  inputMode: 'numeric',
+                  pattern: '\\d{2}-\\d{2}',
+                  placeholder: '05-25',
+                }}
               />
             </div>
           </div>

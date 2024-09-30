@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import AbPagination from './AbPagination';
-import { ArrowRight } from 'iconsax-react';
+import AbDateFormat from './AbDateFormat';
 
 const AbTable = ({ data, columns, icon, clickOnIcon }) => {
     const [currentPage, setCurrentPage] = useState(1);
@@ -41,11 +41,11 @@ const AbTable = ({ data, columns, icon, clickOnIcon }) => {
                                     key={colIndex}
                                     className='tw-py-5 tw-text-sm tw-font-bold tw-text-blackk tw-px-3'
                                 >
-                                    {row[column.key]}
+                                    {column.key === 'created_at' ? AbDateFormat(row[column.key]) : row[column.key] || 'Not Available'}  
                                 </td>
                             ))}
                             {icon && (
-                                <td className='tw-cursor-pointer' onClick={clickOnIcon}> {icon} </td>
+                                <td className='tw-cursor-pointer' onClick={()=> clickOnIcon(row.id)}> {icon} </td>
                             )}
                         </tr>
                     ))}

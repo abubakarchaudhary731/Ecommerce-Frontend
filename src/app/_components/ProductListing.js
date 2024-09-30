@@ -36,7 +36,7 @@ const ProductListing = ({
     return (
         <div className="tw-mb-20">
             <Slider {...settings} className='tw-flex tw-justify-between'>
-                {products.map((item, index) => (
+                {products?.map((item, index) => (
                     <div key={index} className='tw-px-2'>
                         <ProductCard 
                             item={item}

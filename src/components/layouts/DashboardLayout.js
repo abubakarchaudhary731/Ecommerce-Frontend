@@ -1,9 +1,20 @@
 'use client'
-import React from 'react';
+import React, { useEffect } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import { CardTick, Heart, Location, Personalcard, TruckTick } from 'iconsax-react';
+import { useDispatch, useSelector } from 'react-redux';
+import { getAddress } from '@/reduxtoolkit/slices/auth/AddressSlice';
+import { getCardDetail } from '@/reduxtoolkit/slices/auth/PaymentDetailSlice';
 
 const DashboardLayout = ({ children, counts }) => {
+    const dispatch = useDispatch();
+    const { userAddresses } = useSelector((state) => state.UserAddress);
+    const { userCards } = useSelector((state) => state.PaymentDetail);
+    useEffect(() => {
+        dispatch(getAddress());
+        dispatch(getCardDetail());
+    }, [dispatch, counts]);
+
     return (
         <div className='md:tw-flex tw-flex-col md:tw-flex-row tw-my-10'>
             <div className='tw-basis-80 tw-bg-white tw-rounded-xl tw-h-[70vh] tw-py-5'>
@@ -12,8 +23,8 @@ const DashboardLayout = ({ children, counts }) => {
                 {renderNavItem(Heart, 'Wishlist', counts?.wishlist)}
                 <h1 className='tw-pt-6 tw-text-icon tw-text-lg tw-font-bold tw-px-5'> Account Settings </h1>
                 {renderNavItem(Personalcard, 'Profile', counts?.profile)}
-                {renderNavItem(Location, 'Addresses', 4)}
-                {renderNavItem(CardTick, 'Payment-Methods', 2)}
+                {renderNavItem(Location, 'Addresses', userAddresses?.length)}
+                {renderNavItem(CardTick, 'Payment-Methods', userCards?.length)}
             </div>
             <div className='tw-basis-full md:tw-pl-10 tw-mt-5 md:tw-mt-0'>
                 {children}
@@ -25,11 +36,12 @@ const DashboardLayout = ({ children, counts }) => {
 const renderNavItem = (Icon, label, count) => {
     const router = useRouter();
     const pathName = usePathname();
+    const param = pathName.split('/').pop();
     let isActive = pathName === '/' + label.toLowerCase();
 
-    if ((pathName === '/orders' || pathName === '/orderdetail') && label.toLowerCase() === 'orders') {
+    if ((pathName === '/orders' || pathName === `/orders/${param}`) && label.toLowerCase() === 'orders') {
         isActive = true;
-    } else if (pathName === '/orders' || pathName === '/orderdetail') {
+    } else if (pathName === '/orders' || pathName === `/orders/${param}`) {
         isActive = false;
     }
 

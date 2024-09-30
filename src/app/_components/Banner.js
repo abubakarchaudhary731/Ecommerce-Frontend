@@ -37,7 +37,7 @@ const Banner = () => {
         }, 8000);
 
         return () => clearInterval(interval);
-    }, []);
+    }, [data.length]);
 
     useEffect(() => {
         const handleResize = () => {

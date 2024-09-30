@@ -1,7 +1,6 @@
 'use client'
 import React from 'react'
 import ProductCard from '@/components/shared/ProductCard'
-import ProductData from '@/components/ProductData'
 import { Heart } from 'iconsax-react'
 
 const Main = () => {
@@ -14,7 +13,7 @@ const Main = () => {
 
       <div className=' tw-mt-5 tw-flex tw-justify-between tw-flex-wrap tw-gap-5'>
         {
-          ProductData.map((item, index) => (
+          [1,2,3,4].map((item, index) => (
             <div key={index} className='tw-w-full sm:tw-w-[290px] xl:tw-w-[345px]'>
               <ProductCard
                 item={item}

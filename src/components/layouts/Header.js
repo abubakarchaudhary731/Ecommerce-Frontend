@@ -1,5 +1,5 @@
 'use client';
-import { useEffect, useState } from 'react';
+import { useEffect, useLayoutEffect, useState } from 'react';
 import Link from 'next/link';
 import { MdOutlineSegment } from 'react-icons/md';
 import { IoMdClose } from 'react-icons/io';
@@ -11,6 +11,7 @@ import Backdrop from '@mui/material/Backdrop';
 import css from '@/components/style.module.css';
 import { logoutUser } from '@/reduxtoolkit/slices/auth/LoginSlice';
 import { getCartItems } from '@/reduxtoolkit/slices/cart/CartSlice';
+import { resetCheckoutState } from '@/reduxtoolkit/slices/cart/CheckoutSlice';
 
 const Header = () => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -19,7 +20,8 @@ const Header = () => {
     const dispatch = useDispatch();
     const pathName = usePathname();
     // Protected Routes
-    const protectedRoutes = ['/cart', '/profile', '/orders', '/orderdetail', '/wishlist', '/addresses', '/payment-methods'];
+    const param = pathName.split('/').pop();
+    const protectedRoutes = ['/cart', '/checkout', '/profile', '/orders', `/orders/${param}`, '/wishlist', '/addresses', '/payment-methods'];
     const { token } = useSelector((state) => state.LoginUser);
     const { cartItems } = useSelector((state) => state.Cart);
     const cartItemCount = cartItems?.length;
@@ -30,18 +32,18 @@ const Header = () => {
         }
     }, [token, dispatch]);
 
-    useEffect(() => {
+    useLayoutEffect(() => {
         if (!token && protectedRoutes.includes(pathName)) {
             dispatch(addSnackbarData({ message: 'Please login first', variant: 'error' }));
             redirect('/login');
         }
     }, [token, pathName]);
-    useEffect(() => {
+    useLayoutEffect(() => {
         if (token && ['/login', '/register'].includes(pathName)) {
             dispatch(addSnackbarData({ message: 'You are already logged in', variant: 'success' }));
             redirect('/');
         }
-    })
+    });
 
     const toggleSearch = () => {
         setIsMenuOpen(false);
@@ -67,9 +69,10 @@ const Header = () => {
     };
 
     const handleLogout = () => {
-        dispatch(logoutUser());
-        dispatch(addSnackbarData({ message: 'Logged out successfully', variant: 'success' }));
         router.push('/login');
+        dispatch(logoutUser());
+        dispatch(resetCheckoutState());
+        dispatch(addSnackbarData({ message: 'Logged out successfully', variant: 'success' }));
     };
 
     const links = [
@@ -99,7 +102,7 @@ const Header = () => {
                             ))}
                             <div className="tw-ml-8 tw-flex tw-items-center tw-space-x-4">
                                 <SearchNormal1 className={isActive('/search') ? css.active : 'tw-cursor-pointer'} onClick={toggleSearch} />
-                                <User className={isActive(['/profile', '/orders', '/wishlist', '/addresses', '/payment-methods', '/orderdetail']) ? css.active : 'tw-cursor-pointer'} onClick={() => router.push('/profile')} />
+                                <User className={isActive(['/profile', '/orders', '/wishlist', '/addresses', '/payment-methods', `/orders/${param}`]) ? css.active : 'tw-cursor-pointer'} onClick={() => router.push('/profile')} />
                                 <div className="tw-relative tw-cursor-pointer" onClick={() => router.push('/cart')}>
                                     <ShoppingCart className={isActive('/cart') ? css.active : ''} />
                                     {

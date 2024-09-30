@@ -1,7 +1,6 @@
 'use client';
 import React, { useEffect, useState } from 'react'
 import SideBar from '@/components/layouts/SideBar'
-import ProductData from '@/components/ProductData';
 import ProductCard from '@/components/shared/ProductCard';
 import AbPagination from '@/components/inputfields/AbPagination';
 import AbInputField from '@/components/inputfields/AbInputField';

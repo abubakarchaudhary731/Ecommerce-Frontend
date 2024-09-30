@@ -7,6 +7,7 @@ import AbButton from '@/components/inputfields/AbButton';
 import { useRouter } from 'next/navigation';
 import { deleteCartItem, getCartItems, updateCartItem } from '@/reduxtoolkit/slices/cart/CartSlice';
 import { addSnackbarData } from '@/reduxtoolkit/slices/SnakMessageSlice';
+import { proceedToCheckout } from '@/reduxtoolkit/slices/cart/CheckoutSlice';
 
 const Main = () => {
     const router = useRouter();
@@ -15,8 +16,8 @@ const Main = () => {
     const { token } = useSelector((state) => state.LoginUser);
     const [openAlert, setOpenAlert] = useState(false);
     const [deleteId, setDeleteId] = useState(null);
-    const [selectAll, setSelectAll] = useState(false);
-    const [checkedItems, setCheckedItems] = useState(cartItems?.map(item => item.id));
+    const initialCheckedItems = cartItems.filter((item) => item.product.stock >= item.quantity).map((item) => item.id);
+    const [checkedItems, setCheckedItems] = useState(initialCheckedItems);
     const [quantities, setQuantities] = useState({});
 
     useEffect(() => {
@@ -40,10 +41,11 @@ const Main = () => {
             [itemId]: (prevQuantities[itemId] || 1) + 1,
         }));
         dispatch(updateCartItem({ id: itemId, quantity: quantities[itemId] + 1 })).then((result) => {
-            if (!result?.payload?.message) {
-                dispatch(addSnackbarData({ message: "Something went wrong", variant: 'error' }));
+            if (result?.payload?.message) {
                 dispatch(getCartItems());
+                dispatch(addSnackbarData({ message: result?.payload?.message, variant: 'success' }));
             } else {
+                dispatch(addSnackbarData({ message: "Something went wrong", variant: 'error' }));
                 dispatch(getCartItems());
             }
         });
@@ -56,10 +58,11 @@ const Main = () => {
                 [itemId]: prevQuantities[itemId] - 1,
             }));
             dispatch(updateCartItem({ id: itemId, quantity: quantities[itemId] - 1 })).then((result) => {
-                if (!result?.payload?.message) {
-                    dispatch(addSnackbarData({ message: "Something went wrong", variant: 'error' }));
+                if (result?.payload?.message) {
                     dispatch(getCartItems());
+                    dispatch(addSnackbarData({ message: result?.payload?.message, variant: 'success' }));
                 } else {
+                    dispatch(addSnackbarData({ message: "Something went wrong", variant: 'error' }));
                     dispatch(getCartItems());
                 }
             });
@@ -75,6 +78,8 @@ const Main = () => {
         setOpenAlert(false);
         setDeleteId(null);
     };
+
+    // ******************* Delete Cart Items ****************** //
     const handleOnConfirm = () => {
         dispatch(deleteCartItem(deleteId)).then((result) => {
             if (result?.payload?.message) {
@@ -90,9 +95,12 @@ const Main = () => {
 
     // **************** Handle Header Checkbox Change ******************** //
     const handleHeaderCheckboxChange = (event) => {
-        setSelectAll(!selectAll);
-        setCheckedItems(selectAll ? [] : cartItems.map((item) => item.id));
-    };
+        const { checked } = event.target;
+        const newCheckedItems = checked
+            ? cartItems.filter((item) => item.product.stock >= item.quantity).map((item) => item.id)
+            : [];
+        setCheckedItems(newCheckedItems);
+    };    
 
     const handleBodyCheckboxChange = (e) => {
         const itemId = parseInt(e.target.value);
@@ -105,7 +113,7 @@ const Main = () => {
         });
     };
 
-    // Calculate total of checked items
+    // ******************** Calculate total of checked items *********************** //
     const checkedItemsTotal = checkedItems?.reduce((acc, itemId) => {
         const item = cartItems.find(item => item.id === itemId);
         if (item) {
@@ -114,6 +122,21 @@ const Main = () => {
             return acc;
         }
     }, 0);
+
+    // ******************** Proceed To Checkout *********************** //
+    const handleCheckout = () => {
+        if (checkedItems.length === 0) {
+            dispatch(addSnackbarData({ message: 'Please select at least one item', variant: 'error' }));
+            return;
+        }
+        dispatch(proceedToCheckout({ cart_ids: checkedItems })).then((result) => {
+            if (!result?.payload?.products) {
+                dispatch(addSnackbarData({ message: 'Something went wrong', variant: 'error' }));
+            } else {
+                router.push('/checkout')
+            }
+        });
+    };
 
     return (
         <>
@@ -136,25 +159,38 @@ const Main = () => {
                             </div>
 
                             <div className='tw-basis-96'>
-                                <div className='tw-bg-whitee tw-min-h-[70vh] tw-rounded-xl tw-px-5 tw-py-10 '>
+                                <div className='tw-bg-whitee lg:tw-min-h-[70vh] tw-rounded-xl tw-px-5 tw-py-10 '>
                                     <div className='tw-flex tw-flex-col tw-gap-3'>
                                         {cartItems?.map((item, index) => (
                                             checkedItems.includes(item.id) && (
                                                 <div className='tw-flex tw-justify-between' key={index}>
                                                     <p className='tw-text-icon tw-font-bold'>{item.product.name}</p>
-                                                    <p>${(item.product.price * (quantities[item.id] || 1)).toFixed(2)}</p>
+                                                    <p>{(item.product.price * (quantities[item.id] || 1)).toFixed(2)}</p>
                                                 </div>
                                             )
                                         ))}
                                         <hr className='tw-border-icon' />
                                         <div className='tw-flex tw-justify-between'>
                                             <p className='tw-text-icon tw-font-bold'> Total: </p>
-                                            <p>${checkedItemsTotal.toFixed(2)}</p>
+                                            <p>{checkedItemsTotal.toFixed(2)} <small>PKR</small></p>
                                         </div>
                                         <hr className='tw-border-icon' />
                                     </div>
                                 </div>
                             </div>
+                        </div>
+                        <div className='tw-mt-5 tw-flex tw-flex-col tw-gap-2 sm:tw-flex-row sm:tw-justify-between'>
+                            <AbButton
+                                label='Continue Shopping'
+                                contained={true}
+                                className='tw-px-4 tw-max-w-60'
+                                handleClick={() => router.push('/products')}
+                            />
+                            <AbButton
+                                label={`Proceed to Checkout(${checkedItems.length})`}
+                                className='tw-max-w-64'
+                                handleClick={handleCheckout}
+                            />
                         </div>
                         {/* Alert dialog for deletion confirmation */}
                         <AbAlertDialog
