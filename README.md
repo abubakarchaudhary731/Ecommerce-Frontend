@@ -28,6 +28,9 @@ Before you begin, make sure you have Node.js installed on your machine. You can 
     yarn install
     ```
 
+3. Create a .env file. 
+4. Copy the .env.example file & paste it into the .env file.
+
 ### Running the Development Server
 
 To start the development server, run one of the following commands:
